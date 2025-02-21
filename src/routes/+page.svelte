@@ -16,18 +16,31 @@
     } else {
         greeting = "night";
     }
+
+    function timeFormatted(time) {
+        if (parseInt(time.slice(0,2),10) > 12) {
+            return (parseInt(time.slice(0,2),10)-12)+time.slice(2)+" PM"
+        } else if (parseInt(time.slice(0,2),10) == 0){
+            return "12"+time.slice(2)+" AM"
+        } else {
+            return time+" AM"
+        }
+    }
 </script>
 
 <div class="content">
     <div class="block">
-        <h2>Good {greeting}.</h2>
+        <h2 style="margin-bottom:-2vh;">Good {greeting}.</h2>
         {#if weatherState.weather}
-            <p>Weather in {weatherState.weather.location.name}, {weatherState.weather.location.region}, {weatherState.weather.location.country}.</p>    
+            <p>Weather in {weatherState.weather.location.name}, {weatherState.weather.location.region}, {weatherState.weather.location.country}.</p>
         {/if}
     </div>
     <br>
     <div class="block">
-        <h2>Current Weather</h2>
+        <h2 style="margin-bottom:-2vh;">Current Weather</h2>
+        {#if weatherState.weather}
+            <p>Last refreshed: {timeFormatted(weatherState.weather.location.localtime.slice(11))}</p>
+        {/if}
         <div class="row">
             <div class="title">
                 {#if weatherState.weather}
