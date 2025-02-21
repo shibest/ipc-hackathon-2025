@@ -170,7 +170,7 @@
 				freezing = false;
 				fog = false;
 				warning = true;
-				weatherState.danger = ['visibility'];
+				weatherState.danger = ['visibility', 'storm', 'road'];
 			} else if (weather.current.condition.text === "Fog") {
 				clouds = 3;
 				rain = 0;
@@ -220,6 +220,7 @@
 				freezing = true;
 				fog = false;
 				warning = true;
+				weatherState.danger = ['freezing', 'road'];
 			} else if (weather.current.condition.text === "Heavy freezing drizzle") {
 				clouds = 3;
 				rain = 4;
@@ -229,6 +230,7 @@
 				freezing = true;
 				fog = false;
 				warning = true;
+				weatherState.danger = ['storm', 'freezing', 'road'];
 			} else if (weather.current.condition.text === "Patchy light rain") {
 				clouds = 2;
 				rain = 1;
@@ -278,7 +280,7 @@
 				freezing = false;
 				fog = false;
 				warning = false;
-				weatherState.danger = ['driving'];
+				weatherState.danger = ['road', 'storm'];
 			} else if (weather.current.condition.text === "Heavy rain") {
 				clouds = 3;
 				rain = 4;
@@ -288,7 +290,7 @@
 				freezing = false;
 				fog = false;
 				warning = false;
-				weatherState.danger = ['driving'];
+				weatherState.danger = ['road', 'storm'];
 			} else if (weather.current.condition.text === "Light freezing rain") {
 				clouds = 3;
 				rain = 2;
@@ -298,6 +300,7 @@
 				freezing = true;
 				fog = false;
 				warning = true;
+				weatherState.danger = ['freezing', 'road'];
 			} else if (weather.current.condition.text === "Moderate or heavy freezing rain") {
 				clouds = 3;
 				rain = 3;
@@ -307,6 +310,7 @@
 				freezing = true;
 				fog = false;
 				warning = true;
+				weatherState.danger = ['storm', 'freezing', 'road'];
 			} else if (weather.current.condition.text === "Light sleet") {
 				clouds = 3;
 				rain = 2;
@@ -316,6 +320,7 @@
 				freezing = true;
 				fog = false;
 				warning = true;
+				weatherState.danger = ['freezing', 'road'];
 			} else if (weather.current.condition.text === "Moderate or heavy sleet") {
 				clouds = 3;
 				rain = 3;
@@ -325,6 +330,7 @@
 				freezing = true;
 				fog = false;
 				warning = true;
+				weatherState.danger = ['storm', 'freezing', 'road'];
 			} else if (weather.current.condition.text === "Patchy light snow") {
 				clouds = 2;
 				rain = 0;
@@ -364,7 +370,7 @@
 				freezing = false;
 				fog = false;
 				warning = true;
-				weatherState.danger = ['visibility'];
+				weatherState.danger = ['road'];
 			} else if (weather.current.condition.text === "Patchy heavy snow") {
 				clouds = 2;
 				rain = 0;
@@ -374,6 +380,7 @@
 				freezing = false;
 				fog = false;
 				warning = true;
+				weatherState.danger = ['road'];
 			} else if (weather.current.condition.text === "Heavy snow") {
 				clouds = 3;
 				rain = 0;
@@ -383,6 +390,7 @@
 				freezing = false;
 				fog = false;
 				warning = true;
+				weatherState.danger = ['storm', 'road'];
 			} else if (weather.current.condition.text === "Ice pellets") {
 				clouds = 3;
 				rain = 0;
@@ -392,6 +400,7 @@
 				freezing = false;
 				fog = false;
 				warning = true;
+				weatherState.danger = ['storm'];
 			} else if (weather.current.condition.text === "Light rain shower") {
 				clouds = 3;
 				rain = 2;
@@ -401,6 +410,7 @@
 				freezing = false;
 				fog = false;
 				warning = false;
+				weatherState.danger = null;
 			} else if (weather.current.condition.text === "Moderate or heavy rain shower") {
 				clouds = 3;
 				rain = 3;
@@ -410,6 +420,7 @@
 				freezing = false;
 				fog = false;
 				warning = false;
+				weatherState.danger = ['road'];
 			} else if (weather.current.condition.text === "Torrential rain shower") {
 				clouds = 3;
 				rain = 4;
@@ -419,6 +430,7 @@
 				freezing = false;
 				fog = false;
 				warning = true;
+				weatherState.danger = ['storm', 'road'];
 			} else if (weather.current.condition.text === "Light sleet showers") {
 				clouds = 3;
 				rain = 2;
@@ -428,6 +440,7 @@
 				freezing = true;
 				fog = false;
 				warning = false;
+				weatherState.danger = null;
 			} else if (weather.current.condition.text === "Moderate or heavy sleet showers") {
 				clouds = 3;
 				rain = 3;
@@ -437,6 +450,7 @@
 				freezing = true;
 				fog = false;
 				warning = true;
+				weatherState.danger = ['storm', 'road', 'freezing'];
 			} else if (weather.current.condition.text === "Light snow showers") {
 				clouds = 3;
 				rain = 0;
@@ -446,6 +460,7 @@
 				freezing = false;
 				fog = false;
 				warning = false;
+				weatherState.danger = null;
 			} else if (weather.current.condition.text === "Moderate or heavy snow showers") {
 				clouds = 3;
 				rain = 0;
@@ -455,6 +470,7 @@
 				freezing = false;
 				fog = false;
 				warning = true;
+				weatherState.danger = ['storm', 'road'];
 			} else if (weather.current.condition.text === "Light showers of ice pellets") {
 				clouds = 3;
 				rain = 0;
@@ -464,6 +480,7 @@
 				freezing = false;
 				fog = false;
 				warning = false;
+				weatherState.danger = null;
 			} else if (weather.current.condition.text === "Moderate or heavy showers of ice pellets") {
 				clouds = 3;
 				rain = 0;
@@ -473,6 +490,7 @@
 				freezing = false;
 				fog = false;
 				warning = true;
+				weatherState.danger = ['storm'];
 			} else if (weather.current.condition.text === "Patchy light rain with thunder") {
 				clouds = 2;
 				rain = 1;
@@ -482,6 +500,7 @@
 				freezing = false;
 				fog = false;
 				warning = false;
+				weatherState.danger = null;
 			} else if (weather.current.condition.text === "Moderate or heavy rain with thunder") {
 				clouds = 3;
 				rain = 3;
@@ -491,6 +510,7 @@
 				freezing = false;
 				fog = false;
 				warning = true;
+				weatherState.danger = ['storm', 'road'];
 			} else if (weather.current.condition.text === "Patchy light snow with thunder") {
 				clouds = 2;
 				rain = 0;
@@ -500,6 +520,7 @@
 				freezing = false;
 				fog = false;
 				warning = false;
+				weatherState.danger = null;
 			} else if (weather.current.condition.text === "Moderate or heavy snow with thunder") {
 				clouds = 3;
 				rain = 0;
@@ -509,6 +530,7 @@
 				freezing = false;
 				fog = false;
 				warning = true;
+				weatherState.danger = ['storm', 'road'];
 			}
 		}).catch(error => {
 			console.error('There was a problem with the fetch operation:', error);
@@ -573,7 +595,7 @@
 	}
 
 	async function getWeatherForecast() {
-		
+
 	}
 
     async function getPosition() {
