@@ -1,2 +1,103 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script>
+    import {weatherState, iconState, astronomyState} from '$lib/state.svelte';
+
+    import {Moon, CloudMoon, Sun, CloudSun, CloudRain, CloudSnow, CloudFog, CloudLightning, Cloud} from 'phosphor-svelte';
+
+    let greeting = "morning";
+    let now = new Date();
+    if (now.getHours() < 3) {
+        greeting = "night";
+    } else if (now.getHours() < 12) {
+        greeting = "morning";
+    } else if (now.getHours() < 18) {
+        greeting = "afternoon";
+    } else if (now.getHours() < 22) {
+        greeting = "evening";
+    } else {
+        greeting = "night";
+    }
+</script>
+
+<div class="content">
+    <div class="block">
+        <h2>Good {greeting}.</h2>
+        {#if weatherState.weather}
+            <p>Weather in {weatherState.weather.location.name}, {weatherState.weather.location.region}, {weatherState.weather.location.country}.</p>    
+        {/if}
+    </div>
+    <br>
+    <div class="block">
+        <h2>Current Weather</h2>
+        <div class="row">
+            <div class="title">
+                {#if weatherState.weather}
+                    <h1>{weatherState.weather.current.condition.text}</h1>
+                {/if}
+            </div>
+            <div class="weather-icon">
+                {#if iconState.icon}
+                    {#if iconState.icon === "Sun"}
+                        <Sun />
+                    {:else if iconState.icon === "Moon"}
+                        <Moon />
+                    {:else if iconState.icon === "SunCloud"}
+                        <CloudSun />
+                    {:else if iconState.icon === "MoonCloud"}
+                        <CloudMoon />
+                    {:else if iconState.icon === "Cloud"}
+                        <Cloud />
+                    {:else if iconState.icon === "Rain"}
+                        <CloudRain />
+                    {:else if iconState.icon === "Snow"}
+                        <CloudSnow />
+                    {:else if iconState.icon === "Fog"}
+                        <CloudFog />
+                    {:else if iconState.icon === "Thunder"}
+                        <CloudLightning />
+                    {/if}
+                {/if}
+            </div>
+            <div class="text">
+                {#if weatherState.weather}
+                    <p>Temperature: {weatherState.weather.current.temp_f}°F/{weatherState.weather.current.temp_c}°C<br>
+                        Feels like: {weatherState.weather.current.feelslike_f}°F/{weatherState.weather.current.feelslike_c}°C<br>
+                        Humidity: {weatherState.weather.current.humidity}%</p>
+                {/if}
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<style>
+    .content{
+        position: absolute;
+        width: 60vw;
+        height: 90vh;
+        margin-left: 20vw;
+        margin-right: 20vw;
+        margin-top:5vh;
+        overflow: auto;
+    }
+    .block{
+        background-color: rgba(255,255,255,.6);
+        backdrop-filter: blur(2vh);
+        border-radius: 2vh;
+        padding: 2vh 2vw;
+    }
+    .row {
+        display: flex;
+        gap: 2%;
+        padding: 0 4vw;
+    }
+    .title {
+        flex: 32%;
+    }
+    .weather-icon {
+        flex: 24%;
+        font-size: 12vh;
+    }
+    .text { 
+        flex: 40%;
+    }
+</style>
