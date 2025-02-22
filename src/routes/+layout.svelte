@@ -1039,7 +1039,7 @@
 </div>
 <div class="navbar">
 	<div class="bar">
-		<a href="/" class="routeL" title="name">name</a>
+		<a href="/" class="routeL" title="name">AccliMate</a>
 		<div class="right" style="float:right">
 			<a href="/" class="route" title="Weather Now">Now</a>
 			<a href="/forecast" class="route" title="Forecast">Forecast</a>

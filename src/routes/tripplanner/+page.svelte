@@ -10,6 +10,8 @@
 
     import {weatherState} from '$lib/state.svelte';
 
+    import {Moon, CloudMoon, Sun, CloudSun, CloudRain, CloudSnow, CloudFog, CloudLightning, Cloud} from 'phosphor-svelte';
+
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_API_KEY;
 
     let map;
@@ -246,11 +248,49 @@
     <h2>Weather</h2>
     {#if origin_weather}
         <h3>Weather in {origin_weather.location.name}, {origin_weather.location.region}</h3>
-        <p>{origin_weather.current.condition.text}</p>
+        <p>{#if origin_weather.current.condition.text.includes('thunder')}
+            <CloudLightning />
+        {:else if origin_weather.current.condition.text.includes('rain') || origin_weather.current.condition.text.includes('drizzle') || origin_weather.current.condition.text.includes('sleet') || origin_weather.current.condition.text.includes('shower')}
+            <CloudRain/>
+        {:else if origin_weather.current.condition.text.includes('snow') || origin_weather.current.condition.text.includes('ice') || origin_weather.current.condition.text.includes('bliz')}
+            <CloudSnow />
+        {:else if origin_weather.current.condition.text.includes('fog') || origin_weather.current.condition.text.includes('mist')}
+            <CloudFog />
+        {:else if origin_weather.current.condition.text.includes('unny')}
+            <Sun />
+        {:else if origin_weather.current.condition.text.includes('lear')}
+            <Moon />
+        {:else if origin_weather.current.condition.text.includes('part') && origin_weather.current.is_day == 1}
+            <CloudSun />
+        {:else if origin_weather.current.condition.text.includes('part') && origin_weather.current.is_day == 0}
+            <CloudMoon />
+        {:else}
+            <Cloud />
+        {/if}
+        {origin_weather.current.condition.text} | {origin_weather.current.temp_f}°F/{origin_weather.current.temp_c}°C | Feels like: {origin_weather.current.feelslike_f}°F/{origin_weather.current.feelslike_c}°C</p>
     {/if}
     {#if destination_weather}
         <h3>Weather in {destination_weather.location.name}, {destination_weather.location.region}</h3>
-        <p>{destination_weather.current.condition.text}</p>
+        <p>{#if origin_weather.current.condition.text.includes('thunder')}
+            <CloudLightning />
+        {:else if origin_weather.current.condition.text.includes('rain') || origin_weather.current.condition.text.includes('drizzle') || origin_weather.current.condition.text.includes('sleet') || origin_weather.current.condition.text.includes('shower')}
+            <CloudRain/>
+        {:else if origin_weather.current.condition.text.includes('snow') || origin_weather.current.condition.text.includes('ice') || origin_weather.current.condition.text.includes('bliz')}
+            <CloudSnow />
+        {:else if origin_weather.current.condition.text.includes('fog') || origin_weather.current.condition.text.includes('mist')}
+            <CloudFog />
+        {:else if origin_weather.current.condition.text.includes('unny')}
+            <Sun />
+        {:else if origin_weather.current.condition.text.includes('lear')}
+            <Moon />
+        {:else if origin_weather.current.condition.text.includes('part') && origin_weather.current.is_day == 1}
+            <CloudSun />
+        {:else if origin_weather.current.condition.text.includes('part') && origin_weather.current.is_day == 0}
+            <CloudMoon />
+        {:else}
+            <Cloud />
+        {/if}
+        {destination_weather.current.condition.text} | {destination_weather.current.temp_f}°F/{destination_weather.current.temp_c}°C | Feels like: {destination_weather.current.feelslike_f}°F/{destination_weather.current.feelslike_c}°C</p>
     {/if}
 </div>
 
