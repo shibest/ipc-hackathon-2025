@@ -1,7 +1,7 @@
 <script>
 	import { PUBLIC_API_KEY, PUBLIC_URL, PUBLIC_GEMINI_API_KEY } from '$env/static/public';
 	import { onMount } from "svelte";
-	import { weatherState, iconState, astronomyState, geminiOutputState } from '$lib/state.svelte';
+	import { weatherState, iconState, forecastState, astronomyState, geminiOutputState } from '$lib/state.svelte';
 	import { GoogleGenerativeAI } from "@google/generative-ai";
 
 	import '../app.css'
@@ -35,7 +35,7 @@
 	async function callGemini(weathering) {
 		let now = new Date();
 
-		console.log("weathering: " + weathering)
+		//console.log("weathering: " + weathering)
 
 		const genAI = new GoogleGenerativeAI(api_key);
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
@@ -65,8 +65,9 @@
 			weather = json;
 			weatherState.weather = json;
 			//console.log("Weather: " + weather.current.condition.text);
-
-			callGemini(weather);
+			if (geminiOutputState.result === 'Generating...') {
+				callGemini(weather);
+			}
 
 			//check if day/night
 			if (weather.current.condition.text === "Sunny" || weather.current.condition.text === "Clear") {
@@ -211,7 +212,7 @@
 				freezing = true;
 				fog = true;
 				warning = true;
-				weatherState.danger = ['visibility', 'freeze'];
+				weatherState.danger = ['visibility', 'freezing'];
 			} else if (weather.current.condition.text === "Patchy light drizzle") {
 				clouds = 2;
 				rain = 1;
@@ -616,7 +617,84 @@
 	}
 
 	async function getWeatherForecast() {
+		const position = await getPosition();
 
+		const fetchWeatherPromise = await fetch(PUBLIC_URL+'/forecast.json?key='+PUBLIC_API_KEY+'&q='+ await position[1]+','+await position[0]+'&days=7&aqi=yes&alerts=yes')
+		.then(response => {
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			console.log("Response received.")
+			return response.json();
+		}).then(json => {
+			console.log(json);
+			forecastState.forecast = json;
+			let icons = [];
+			let hour_icons = [];
+			for (let i = 0; i < forecastState.forecast.forecast.forecastday.length; i++) {
+				if (forecastState.forecast.forecast.forecastday[i].day.condition.text === "Sunny" || forecastState.forecast.forecast.forecastday[i].day.condition.text === "Clear") {
+					icons.push('sun')
+
+				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text === "Partly cloudy") {
+					icons.push('cloudsun')
+
+				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text === "Cloudy") {
+					icons.push('cloud')
+
+				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text === "Overcast") {
+					icons.push('cloud')
+
+				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text === "Mist") {
+					icons.push('cloudfog')
+
+				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text.includes("thunder")) {
+					icons.push('cloudlightning')
+
+				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text.includes("rain") || forecastState.forecast.forecast.forecastday[i].day.condition.text.includes("drizzle") || forecastState.forecast.forecast.forecastday[i].day.condition.text.includes("sleet") || forecastState.forecast.forecast.forecastday[i].day.condition.text.includes("shower")) {
+					icons.push('cloudrain')
+				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text.includes("snow") || forecastState.forecast.forecast.forecastday[i].day.condition.text.includes("ice")) {
+					icons.push('cloudsnow')
+				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text === "Blizzard") {
+					icons.push('cloudsnow')
+				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text === "Fog") {
+					icons.push('cloudfog')
+				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text === "Freezing fog") {
+					icons.push('cloudfog')
+				}
+			}
+			for (let i = 0; i < forecastState.forecast.forecast.forecastday[0].hour.length; i++) {
+				
+				if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text === "Sunny" || forecastState.forecast.forecast.forecastday[0].hour[i].condition.text === "Clear") {
+					hour_icons.push('sun')
+				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text === "Partly cloudy") {
+					hour_icons.push('cloudsun')
+				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text === "Cloudy") {
+					hour_icons.push('cloud')
+				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text.includes("Overcast")) {
+					hour_icons.push('cloud')
+				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text === "Mist") {
+					hour_icons.push('cloudfog')
+				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text.includes("thunder")) {
+					hour_icons.push('cloudlightning')
+				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text.includes("rain") || forecastState.forecast.forecast.forecastday[0].hour[i].condition.text.includes("drizzle") || forecastState.forecast.forecast.forecastday[0].hour[i].condition.text.includes("sleet") || forecastState.forecast.forecast.forecastday[0].hour[i].condition.text.includes("shower")) {
+					hour_icons.push('cloudrain')
+				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text.includes("snow") || forecastState.forecast.forecast.forecastday[0].hour[i].condition.text.includes("ice")) {
+					hour_icons.push('cloudsnow')
+				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text === "Blizzard") {
+					hour_icons.push('cloudsnow')
+				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text === "Fog") {
+					hour_icons.push('cloudfog')
+				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text === "Freezing fog") {
+					hour_icons.push('cloudfog')
+				}
+			}
+			forecastState.icons = icons;
+			forecastState.hour_icons = hour_icons;
+			console.log(icons)
+			console.log(hour_icons)
+		}).catch(error => {
+			console.error('There was a problem with the fetch operation:', error);
+		});
 	}
 
     async function getPosition() {
@@ -648,6 +726,7 @@
     onMount(async () => {
 		//console.log(getWeatherFromPosition());
 		getCurrentWeather();
+		getWeatherForecast();
 
 		/*if (current_weather.currrent.condition === "Overcast") {
 			bg_color = "gray";
@@ -918,7 +997,6 @@
 					{/each}
 				</div>
 			{:else if clouds == 2 && snow == 0 && rain == 0 && ice_pellets == 0}
-				<div class="sun"></div>
 				<div class="anim_container">
 					{#each Array(40) as _, i}
 						<div class="cloud" style="animation-delay: {Math.random()*60}s; top: {Math.random()*80}vh; scale: {Math.random()+3}; animation-duration: {Math.random()*24+60}s;">
@@ -929,7 +1007,6 @@
 					{/each}
 				</div>
 			{:else if clouds == 3 && snow == 0 && rain == 0 && ice_pellets == 0}
-				<div class="sun"></div>
 				<div class="anim_container">
 					{#each Array(80) as _, i}
 						<div class="cloud" style="animation-delay: {Math.random()*60}s; top: {Math.random()*80}vh; scale: {Math.random()+3}; animation-duration: {Math.random()*24+60}s;">
@@ -949,7 +1026,8 @@
 		<div class="right" style="float:right">
 			<a href="/" class="route">Now</a>
 			<a href="/forecast" class="route">Forecast</a>
-			<a href="/tripplanner" class="routeR">Trip Planner</a>
+			<a href="/tripplanner" class="router">Trip Planner</a>
+			<a href="/help" class="routeR">Help</a>
 		</div>
 	</div>
 </div>
@@ -990,8 +1068,8 @@
 	.star{
 		position: inherit;
 		background-color: rgba(255,255,255,1);
-		height: .8vh;
-		width: .8vh;
+		height: .5vh;
+		width: .5vh;
 		border-radius: 1vh;
 		animation: pulse 2s infinite ease-in-out;
 	}
@@ -1072,6 +1150,14 @@
         backdrop-filter: blur(2vh);
 		width: 100%;
 	}
+	a{
+		color:black;
+		text-decoration: none;
+		transition: .2s
+	}
+	a:hover{
+		color:white;
+	}
 	.route {
 		padding: 0 1vw;
 	}
@@ -1095,7 +1181,7 @@
 
 		0% { transform: scale(1); }
 
-		50% { transform: scale(1.3); }
+		50% { transform: scale(1.75); }
 
 		100% { transform: scale(1); }
 

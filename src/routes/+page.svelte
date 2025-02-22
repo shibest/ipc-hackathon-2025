@@ -1,5 +1,4 @@
 <script>
-    import { onMount } from "svelte";
     import {weatherState, iconState, astronomyState, geminiOutputState} from '$lib/state.svelte';
     import {Moon, CloudMoon, Sun, CloudSun, CloudRain, CloudSnow, CloudFog, CloudLightning, Cloud, ArrowClockwise} from 'phosphor-svelte';
 
@@ -44,11 +43,6 @@
         {/if}
         <a href="/" class="refresh-button" data-sveltekit-reload><ArrowClockwise /></a>
         <div class="row">
-            <div class="title">
-                {#if weatherState.weather}
-                    <h1>{weatherState.weather.current.condition.text}</h1>
-                {/if}
-            </div>
             <div class="weather-icon">
                 {#if iconState.icon}
                     {#if iconState.icon === "Sun"}
@@ -70,6 +64,11 @@
                     {:else if iconState.icon === "Thunder"}
                         <CloudLightning />
                     {/if}
+                {/if}
+            </div>
+            <div class="title">
+                {#if weatherState.weather}
+                    <h1>{weatherState.weather.current.condition.text}</h1>
                 {/if}
             </div>
             <div class="temps">
