@@ -90,11 +90,15 @@
 </script>
 
 <div class="map" bind:this={mapContainer}></div>
-<div class="sidebar">
-    <input type="text" bind:value={origin} placeholder="Origin">
-    <input type="text" bind:value={destination} placeholder="Destination">
-    <button class="plot-route" on:click={() => getRoute(origin, destination)}>Plot Route</button>
-</div>
+<form class="sidebar" on:submit|preventDefault={() => getRoute(origin, destination)}>
+    <label for="origin">Origin:</label>
+    <input type="text" id="origin" bind:value={origin} placeholder="Origin" required>
+
+    <label for="destination">Destination:</label>
+    <input type="text" id="destination" bind:value={destination} placeholder="Destination" required>
+
+    <button type="submit" class="plot-route">Plot Route</button>
+</form>
 
 <style>
     .map {
