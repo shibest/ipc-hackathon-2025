@@ -687,9 +687,9 @@
 				}
 			}
 		}, 100);
-		/*setInterval(function () {
+		setInterval(function () {
 			getCurrentWeather();
-		}, 300000);*/
+		}, 120000);
     });
 </script>
 
@@ -963,7 +963,7 @@
 	.droplet{
 		position: inherit;
 		background-color: rgba(255,255,255,.4);
-		height: 2vh;
+		height: 3vh;
 		width: .2vh;
 		top: -5vh;
 		border-radius: 1vh;

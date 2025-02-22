@@ -84,7 +84,22 @@
             </div>
         </div>
     </div>
-    
+    <br>
+    <div class="block-row">
+        <div class="blocks">
+            <h2>More Weather Info</h2>
+            {#if weatherState.weather}
+                <p class="taut">Cloud Coverage: {weatherState.weather.current.cloud}%</p>
+                <p class="taut">AQI: {weatherState.weather.current.air_quality['us-epa-index']}</p>
+                <p class="taut">Visibility: {weatherState.weather.current.vis_miles} mi / {weatherState.weather.current.vis_km} km</p>
+                <p class="taut">Wind Speed: {weatherState.weather.current.wind_mph} mph / {weatherState.weather.current.wind_kph} kph</p>
+                <p>Wind Direction: {weatherState.weather.current.wind_dir} ({weatherState.weather.current.wind_degree}°)</p>
+            {/if}
+        </div>
+        <div class="blocks">
+            <h2>Advisories</h2>
+        </div>
+    </div>
 </div>
 
 <style>
@@ -124,8 +139,19 @@
         gap: 2%;
         padding: 0 2vw;
     }
+    .block-row{
+        display: flex;
+        gap: 2%;
+    }
+    .blocks{
+        flex: 49%;
+        background-color: rgba(255,255,255,.6);
+        backdrop-filter: blur(2vh);
+        border-radius: 2vh;
+        padding: 2vh 2vw;
+    }
     .title {
-        flex: 20%;
+        flex: 30%;
     }
     .weather-icon {
         flex: 14%;
@@ -135,6 +161,9 @@
         flex: 25%;
     }
     .text { 
-        flex: 35%;
+        flex: 25%;
+    }
+    .taut {
+        margin-bottom: -2vh;
     }
 </style>
