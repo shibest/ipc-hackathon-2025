@@ -71,10 +71,14 @@
                     {/if}
                 {/if}
             </div>
+            <div class="temps">
+                {#if weatherState.weather}
+                    <h1>{weatherState.weather.current.temp_f}°F/{weatherState.weather.current.temp_c}°C</h1>
+                {/if}
+            </div>
             <div class="text">
                 {#if weatherState.weather}
-                    <p>Temperature: {weatherState.weather.current.temp_f}°F/{weatherState.weather.current.temp_c}°C<br>
-                        Feels like: {weatherState.weather.current.feelslike_f}°F/{weatherState.weather.current.feelslike_c}°C<br>
+                    <p>Feels like: {weatherState.weather.current.feelslike_f}°F/{weatherState.weather.current.feelslike_c}°C<br>
                         Humidity: {weatherState.weather.current.humidity}%</p>
                 {/if}
             </div>
@@ -118,16 +122,19 @@
     .row {
         display: flex;
         gap: 2%;
-        padding: 0 4vw;
+        padding: 0 2vw;
     }
     .title {
-        flex: 32%;
+        flex: 20%;
     }
     .weather-icon {
-        flex: 24%;
+        flex: 14%;
         font-size: 12vh;
     }
+    .temps{
+        flex: 25%;
+    }
     .text { 
-        flex: 40%;
+        flex: 35%;
     }
 </style>

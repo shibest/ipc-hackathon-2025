@@ -756,6 +756,36 @@
 			</div>
 		{/if}
 
+		{#if ice_pellets == 1}
+			<div class="anim_container">
+				{#each Array(10) as _, i}
+					<div class="pellet" style="animation-delay: {Math.random()*8}s; left: {Math.random()*100}vw;">
+					</div>
+				{/each}
+			</div>
+		{:else if ice_pellets == 2}
+			<div class="anim_container">
+				{#each Array(20) as _, i}
+					<div class="pellet" style="animation-delay: {Math.random()*8}s; left: {Math.random()*100}vw;">
+					</div>
+				{/each}
+			</div>
+		{:else if ice_pellets == 3}
+			<div class="anim_container">
+				{#each Array(40) as _, i}
+					<div class="pellet" style="animation-delay: {Math.random()*8}s; left: {Math.random()*100}vw;">
+					</div>
+				{/each}
+			</div>
+		{:else if ice_pellets == 4}
+			<div class="anim_container">
+				{#each Array(80) as _, i}
+					<div class="pellet" style="animation-delay: {Math.random()*8}s; left: {Math.random()*100}vw;">
+					</div>
+				{/each}
+			</div>
+		{/if}
+
 		{#if day}
 			{#if clouds == 0}
 				<div class="anim_container">
@@ -947,6 +977,14 @@
 		top: -5vh;
 		border-radius: 1vh;
 		animation: fall 5s infinite linear;
+	}
+	.pellet{
+		position: inherit;
+		background-color: rgba(255,255,255,.8);
+		height: .5vh;
+		width: .5vh;
+		top: -5vh;
+		animation: fall .5s infinite linear;
 	}
 
 	.navbar{
