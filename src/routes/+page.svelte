@@ -91,7 +91,7 @@
             <h2>More Weather Info</h2>
             {#if weatherState.weather}
                 <p class="taut">Cloud Coverage: {weatherState.weather.current.cloud}%</p>
-                <p class="taut">AQI: {weatherState.weather.current.air_quality['us-epa-index']}</p>
+                <p class="taut">AQI: {weatherState.weather.current.air_quality['pm2_5']}</p>
                 <p class="taut">Visibility: {weatherState.weather.current.vis_miles} mi / {weatherState.weather.current.vis_km} km</p>
                 <p class="taut">Wind Speed: {weatherState.weather.current.wind_mph} mph / {weatherState.weather.current.wind_kph} kph</p>
                 <p>Wind Direction: {weatherState.weather.current.wind_dir} ({weatherState.weather.current.wind_degree}°)</p>
