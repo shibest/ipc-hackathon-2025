@@ -26,18 +26,19 @@
     .inquiry{
         position: absolute;
         width: 60vw;
-        height: 8vh;
+        height: 10vh;
         margin-left: 20vw;
         margin-right: 20vw;
         overflow: auto;
         top: auto;
-        bottom: -2vh;
+        bottom: 0vh;
     }
     .inquire{
         background-color: rgba(255,255,255,.6);
         backdrop-filter: blur(2vh);
         border-radius: 2vh;
         padding: .5vh 2vw;
+        height: 100%;
     }
     .block{
         background-color: rgba(255,255,255,.6);

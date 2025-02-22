@@ -163,8 +163,10 @@
 <style>
     .map {
         position: absolute;
-        width: 100vw;
-        height: 100vh;
+        margin: 0 1vw;
+        width: 98vw;
+        height: 84vh;
+        border-radius: 2vh;
     }
 
     .sidebar {

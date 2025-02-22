@@ -42,7 +42,7 @@
         {#if weatherState.weather}
             <p>Last refreshed: {timeFormatted(weatherState.weather.location.localtime.slice(11))}</p>
         {/if}
-        <a href="/" class="refresh-button" data-sveltekit-reload><ArrowClockwise /></a>
+        <a href="/" class="refresh-button" title="Page Refresh" data-sveltekit-reload><ArrowClockwise /></a>
         <div class="row">
             <div class="weather-icon">
                 {#if iconState.icon}
@@ -101,7 +101,7 @@
             <h2>Advisories</h2>
             {#if alertState.alerts}
                 {#each alertState.alerts.alerts.alert as _, i}
-                    <p class="alert-link taut" on:click={() => goto('/alerts')}>
+                    <p class="alert-link taut" title={alertState.alerts.alerts.alert[i].event} on:click={() => goto('/alerts')}>
                         {#if alertState.alerts.alerts.alert[i].severity === 'Severe'}
                             <Warning />
                         {:else}

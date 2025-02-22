@@ -3,6 +3,7 @@
 	import { onMount } from "svelte";
 	import { weatherState, iconState, alertState, forecastState, astronomyState, geminiOutputState } from '$lib/state.svelte';
 	import { GoogleGenerativeAI } from "@google/generative-ai";
+	import { SunHorizon } from 'phosphor-svelte';
 
 	import '../app.css'
 
@@ -1038,13 +1039,13 @@
 </div>
 <div class="navbar">
 	<div class="bar">
-		<a href="/" class="routeL">name</a>
+		<a href="/" class="routeL" title="name">name</a>
 		<div class="right" style="float:right">
-			<a href="/" class="route">Now</a>
-			<a href="/forecast" class="route">Forecast</a>
-			<a href="/alerts" class="route">Alerts</a>
-			<a href="/tripplanner" class="router">Trip Planner</a>
-			<a href="/help" class="routeR">Help</a>
+			<a href="/" class="route" title="Weather Now">Now</a>
+			<a href="/forecast" class="route" title="Forecast">Forecast</a>
+			<a href="/alerts" class="route" title="Alerts">Alerts</a>
+			<a href="/tripplanner" class="router" title="Trip Planner">Trip Planner</a>
+			<a href="/help" class="routeR" title="Help">Help</a>
 		</div>
 	</div>
 </div>
@@ -1170,10 +1171,15 @@
 	a{
 		color:black;
 		text-decoration: none;
-		transition: .2s
+		transition: .2s;
+		display: inline-block;
+		align-items: center;
 	}
 	a:hover{
-		color:white;
+		color: rgb(157, 157, 157);
+	}
+	.icon{
+		display: inline;
 	}
 	.route {
 		padding: 0 1vw;
