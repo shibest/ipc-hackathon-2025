@@ -33,6 +33,8 @@
 		"vitest": "^3.0.0"
 	},
 	"dependencies": {
+		"mapbox": "^1.0.0-beta10",
+		"mapbox-gl": "^3.10.0",
 		"phosphor-svelte": "^3.0.1"
 	}
 }
