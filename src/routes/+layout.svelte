@@ -35,12 +35,12 @@
 
 	async function callGemini(weathering) {
 		let now = new Date();
-
-		//console.log("weathering: " + weathering)
+        console.log("weathering");
+		console.log(weathering);
 
 		const genAI = new GoogleGenerativeAI(api_key);
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-		let prompt = "Give me some suggestions of what I can do today with the date and time being " + now + ", the weather being " + weathering.current.condition.text + ', and the temperature outside is ' + weathering.current.temp_f +' degrees fahrenheit.';
+		let prompt = "Give me some suggestions of what I can do today with the date and time being " + now + ", the weather being " + weathering.current.condition.text + ', the temperature outside being ' + weathering.current.temp_f +' degrees fahrenheit, and the location being ' + weathering.location.name + ' ' + weathering.location.region + ', ' + weathering.location.country + '. Give me a paragraph. Don\'t say here are some suggestions.';
         try {
             const response = await model.generateContent(prompt);
             geminiOutputState.result = await response.response.text();
