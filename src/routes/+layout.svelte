@@ -1,7 +1,8 @@
 <script>
-	import { PUBLIC_API_KEY, PUBLIC_URL } from '$env/static/public';
+	import { PUBLIC_API_KEY, PUBLIC_URL, PUBLIC_GEMINI_API_KEY } from '$env/static/public';
 	import { onMount } from "svelte";
-	import { weatherState, iconState, astronomyState } from '$lib/state.svelte';
+	import { weatherState, iconState, astronomyState, geminiOutputState } from '$lib/state.svelte';
+	import { GoogleGenerativeAI } from "@google/generative-ai";
 
 	import '../app.css'
 
@@ -29,6 +30,24 @@
 	let fog = false;
 	let warning = false;
 
+	const api_key = PUBLIC_GEMINI_API_KEY;
+
+	async function callGemini(weathering) {
+		let now = new Date();
+
+		console.log("weathering: " + weathering)
+
+		const genAI = new GoogleGenerativeAI(api_key);
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+		let prompt = "Give me some suggestions of what I can do today with the date and time being " + now + ", the weather being " + weathering.current.condition.text + ', and the temperature outside is ' + weathering.current.temp_f +' degrees fahrenheit.';
+        try {
+            const response = await model.generateContent(prompt);
+            geminiOutputState.result = await response.response.text();
+        } catch (e) {
+            console.error(e);
+        }
+	}
+
 	async function getCurrentWeather() {
 		//console.log(PUBLIC_API_KEY);
 		//console.log(PUBLIC_URL+'/current.json?key='+PUBLIC_API_KEY+'&q='+lat+','+long+'&aqi=yes');
@@ -46,6 +65,8 @@
 			weather = json;
 			weatherState.weather = json;
 			//console.log("Weather: " + weather.current.condition.text);
+
+			callGemini(weather);
 
 			//check if day/night
 			if (weather.current.condition.text === "Sunny" || weather.current.condition.text === "Clear") {
@@ -698,6 +719,10 @@
 		<!--<h1>Your Current Weather: {weather.current.condition.text}</h1>-->
 		{#if rain == 1}
 			<div class="anim_container">
+				<div class="droplet" style="animation-delay: {Math.random()*4}s; left: 4vw;">
+				</div>
+				<div class="droplet" style="animation-delay: {Math.random()*4}s; left: 94vw;">
+				</div>
 				{#each Array(5) as _, i}
 					<div class="droplet" style="animation-delay: {Math.random()*4}s; left: {Math.random()*100}vw;">
 					</div>
@@ -705,6 +730,10 @@
 			</div>
 		{:else if rain == 2}
 			<div class="anim_container">
+				<div class="droplet" style="animation-delay: {Math.random()*4}s; left: 4vw;">
+				</div>
+				<div class="droplet" style="animation-delay: {Math.random()*4}s; left: 94vw;">
+				</div>
 				{#each Array(10) as _, i}
 					<div class="droplet" style="animation-delay: {Math.random()*4}s; left: {Math.random()*100}vw;">
 					</div>
@@ -712,6 +741,10 @@
 			</div>
 		{:else if rain == 3}
 			<div class="anim_container">
+				<div class="droplet" style="animation-delay: {Math.random()*4}s; left: 4vw;">
+				</div>
+				<div class="droplet" style="animation-delay: {Math.random()*4}s; left: 94vw;">
+				</div>
 				{#each Array(30) as _, i}
 					<div class="droplet" style="animation-delay: {Math.random()*4}s; left: {Math.random()*100}vw;">
 					</div>
@@ -719,6 +752,10 @@
 			</div>
 		{:else if rain == 4}
 			<div class="anim_container">
+				<div class="droplet" style="animation-delay: {Math.random()*4}s; left: 4vw;">
+				</div>
+				<div class="droplet" style="animation-delay: {Math.random()*4}s; left: 94vw;">
+				</div>
 				{#each Array(70) as _, i}
 					<div class="droplet" style="animation-delay: {Math.random()*4}s; left: {Math.random()*100}vw;">
 					</div>
@@ -728,6 +765,10 @@
 
 		{#if snow == 1}
 			<div class="anim_container">
+				<div class="flake" style="animation-delay: {Math.random()*8}s; left: 4vw;">
+				</div>
+				<div class="flake" style="animation-delay: {Math.random()*8}s; left: 94vw;">
+				</div>
 				{#each Array(10) as _, i}
 					<div class="flake" style="animation-delay: {Math.random()*8}s; left: {Math.random()*100}vw;">
 					</div>
@@ -735,6 +776,10 @@
 			</div>
 		{:else if snow == 2}
 			<div class="anim_container">
+				<div class="flake" style="animation-delay: {Math.random()*8}s; left: 4vw;">
+				</div>
+				<div class="flake" style="animation-delay: {Math.random()*8}s; left: 94vw;">
+				</div>
 				{#each Array(20) as _, i}
 					<div class="flake" style="animation-delay: {Math.random()*8}s; left: {Math.random()*100}vw;">
 					</div>
@@ -742,6 +787,10 @@
 			</div>
 		{:else if snow == 3}
 			<div class="anim_container">
+				<div class="flake" style="animation-delay: {Math.random()*8}s; left: 4vw;">
+				</div>
+				<div class="flake" style="animation-delay: {Math.random()*8}s; left: 94vw;">
+				</div>
 				{#each Array(40) as _, i}
 					<div class="flake" style="animation-delay: {Math.random()*8}s; left: {Math.random()*100}vw;">
 					</div>
@@ -749,6 +798,10 @@
 			</div>
 		{:else if snow == 4}
 			<div class="anim_container">
+				<div class="flake" style="animation-delay: {Math.random()*8}s; left: 4vw;">
+				</div>
+				<div class="flake" style="animation-delay: {Math.random()*8}s; left: 94vw;">
+				</div>
 				{#each Array(80) as _, i}
 					<div class="flake" style="animation-delay: {Math.random()*8}s; left: {Math.random()*100}vw;">
 					</div>
@@ -758,6 +811,10 @@
 
 		{#if ice_pellets == 1}
 			<div class="anim_container">
+				<div class="pellet" style="animation-delay: {Math.random()*8}s; left: 4vw;">
+				</div>
+				<div class="pellet" style="animation-delay: {Math.random()*8}s; left: 94vw;">
+				</div>
 				{#each Array(10) as _, i}
 					<div class="pellet" style="animation-delay: {Math.random()*8}s; left: {Math.random()*100}vw;">
 					</div>
@@ -765,6 +822,10 @@
 			</div>
 		{:else if ice_pellets == 2}
 			<div class="anim_container">
+				<div class="pellet" style="animation-delay: {Math.random()*8}s; left: 4vw;">
+				</div>
+				<div class="pellet" style="animation-delay: {Math.random()*8}s; left: 94vw;">
+				</div>
 				{#each Array(20) as _, i}
 					<div class="pellet" style="animation-delay: {Math.random()*8}s; left: {Math.random()*100}vw;">
 					</div>
@@ -772,6 +833,10 @@
 			</div>
 		{:else if ice_pellets == 3}
 			<div class="anim_container">
+				<div class="pellet" style="animation-delay: {Math.random()*8}s; left: 4vw;">
+				</div>
+				<div class="pellet" style="animation-delay: {Math.random()*8}s; left: 94vw;">
+				</div>
 				{#each Array(40) as _, i}
 					<div class="pellet" style="animation-delay: {Math.random()*8}s; left: {Math.random()*100}vw;">
 					</div>
@@ -779,6 +844,10 @@
 			</div>
 		{:else if ice_pellets == 4}
 			<div class="anim_container">
+				<div class="pellet" style="animation-delay: {Math.random()*8}s; left: 4vw;">
+				</div>
+				<div class="pellet" style="animation-delay: {Math.random()*8}s; left: 94vw;">
+				</div>
 				{#each Array(80) as _, i}
 					<div class="pellet" style="animation-delay: {Math.random()*8}s; left: {Math.random()*100}vw;">
 					</div>
@@ -1038,6 +1107,6 @@
 	}
 
 	@keyframes fall {
-		100% { transform: translateY(110vh); }
+		100% { transform: translateY(120vh); }
 	}
 </style>

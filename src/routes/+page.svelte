@@ -1,6 +1,6 @@
 <script>
-    import {weatherState, iconState, astronomyState} from '$lib/state.svelte';
-
+    import { onMount } from "svelte";
+    import {weatherState, iconState, astronomyState, geminiOutputState} from '$lib/state.svelte';
     import {Moon, CloudMoon, Sun, CloudSun, CloudRain, CloudSnow, CloudFog, CloudLightning, Cloud, ArrowClockwise} from 'phosphor-svelte';
 
     let greeting = "morning";
@@ -26,6 +26,7 @@
             return time+" AM"
         }
     }
+    
 </script>
 
 <div class="content">
@@ -100,6 +101,14 @@
             <h2>Advisories</h2>
         </div>
     </div>
+    <br>
+    <div class="block">
+        <h2 style="margin-bottom:-2vh;">Things To Do</h2>
+        <p>Provided by Gemini</p>
+        {#if geminiOutputState.result}
+            <p>{geminiOutputState.result}</p>
+        {/if}
+    </div>
 </div>
 
 <style>
@@ -166,4 +175,19 @@
     .taut {
         margin-bottom: -2vh;
     }
+
+    ::-webkit-scrollbar {
+		width: .75vw;
+	}
+	::-webkit-scrollbar-track {
+		background: rgb(0, 0, 0, 0);
+	}
+	::-webkit-scrollbar-thumb {
+		background-color: rgb(255,255,255,.5);
+		border-radius: 1vh;
+		transition: 0.2s;
+	}
+	::-webkit-scrollbar-thumb:hover {
+		background-color: rgb(255, 255, 255,.8);
+	}
 </style>
