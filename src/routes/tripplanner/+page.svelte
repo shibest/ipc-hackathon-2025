@@ -12,7 +12,7 @@
     let mapContainer;
     let origin = '';
     let destination = '';
-    let route = null;
+    let markers = [];
 
     onMount(() => {
         map = new mapboxgl.Map({
@@ -33,12 +33,15 @@
         const destinationCoords = await geocode(destinationPlace);
         //console.log(`https://api.mapbox.com/directions/v5/mapbox/driving/${originCoords.join(',')};${destinationCoords.join(',')}?access_token=${mapboxgl.accessToken}`);
         const response = await fetch(
-            `https://api.mapbox.com/directions/v5/mapbox/driving/${originCoords.join(',')};${destinationCoords.join(',')}?geometries=geojson&access_token=${mapboxgl.accessToken}`
+            `https://api.mapbox.com/directions/v5/mapbox/driving/${originCoords.join(',')};${destinationCoords.join(',')}?geometries=geojson&steps=true&access_token=${mapboxgl.accessToken}`
         );
         const data = await response.json();
 
         if (data.code === 'Ok' && data.routes.length > 0) {
-            route = data.routes[0].geometry.coordinates;
+            const route = data.routes[0].geometry.coordinates;
+            const coordinates = extractCoordinatesAtInterval(data.routes[0], 1200);
+            addPinsToMap(coordinates);
+            console.log("Coordinates at 20-minute intervals:", coordinates);
             const geojson = {
                 type: 'Feature',
                 properties: {},
@@ -86,6 +89,63 @@
         } else {
             throw new Error("Location not found");
         }
+    }
+
+    function extractCoordinatesAtInterval(route, intervalSeconds) {
+        const coordinates = [];
+        let accumulatedDuration = 0;
+        let currentStepIndex = 0;
+        let nextInterval = intervalSeconds;
+
+        while (currentStepIndex < route.legs[0].steps.length) {
+            const step = route.legs[0].steps[currentStepIndex];
+            const stepDuration = step.duration;
+            const stepGeometry = step.geometry.coordinates;
+
+            while (accumulatedDuration + stepDuration >= nextInterval) {
+                const timeDifference = nextInterval - accumulatedDuration;
+                const percentage = timeDifference / stepDuration;
+
+                const interpolatedCoordinates = interpolateCoordinates(stepGeometry, percentage);
+                coordinates.push(interpolatedCoordinates);
+
+                nextInterval += intervalSeconds;
+            }
+
+            accumulatedDuration += stepDuration;
+            currentStepIndex++;
+        }
+        return coordinates;
+    }
+
+    function interpolateCoordinates(geometry, percentage) {
+        if (geometry.length < 2) {
+            return geometry[0];
+        }
+
+        const index = Math.floor((geometry.length - 1) * percentage);
+        const fraction = (geometry.length - 1) * percentage - index;
+
+        const startCoordinates = geometry[index];
+        const endCoordinates = geometry[index + 1];
+
+        const interpolatedLng = startCoordinates[0] + (endCoordinates[0] - startCoordinates[0]) * fraction;
+        const interpolatedLat = startCoordinates[1] + (endCoordinates[1] - startCoordinates[1]) * fraction;
+
+        return [interpolatedLng, interpolatedLat];
+    }
+
+    function addPinsToMap(coordinates) { // testing function
+        markers.forEach(marker => marker.remove());
+        markers = [];
+
+        coordinates.forEach((coord, index) => {
+            const marker = new mapboxgl.Marker()
+              .setLngLat(coord)
+              .setPopup(new mapboxgl.Popup().setHTML(`<h3>Waypoint ${index + 1}</h3>`))
+              .addTo(map);
+            markers.push(marker);
+        });
     }
 </script>
 
