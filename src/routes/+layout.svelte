@@ -641,7 +641,7 @@
 				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text === "Cloudy") {
 					icons.push('cloud')
 
-				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text === "Overcast") {
+				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text.includes("Overcast")) {
 					icons.push('cloud')
 
 				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text === "Mist") {
@@ -1181,7 +1181,7 @@
 
 		0% { transform: scale(1); }
 
-		50% { transform: scale(1.75); }
+		50% { transform: scale(2); }
 
 		100% { transform: scale(1); }
 
