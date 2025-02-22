@@ -6,6 +6,8 @@
     import { onMount } from 'svelte';
     import mapboxgl from 'mapbox-gl';
 
+    import { PUBLIC_API_KEY, PUBLIC_URL } from '$env/static/public';
+
     import {weatherState} from '$lib/state.svelte';
 
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_API_KEY;
@@ -14,6 +16,8 @@
     let mapContainer;
     let origin = '';
     let destination = '';
+    let origin_weather;
+    let destination_weather;
     let markers = [];
 
     onMount(() => {
@@ -24,6 +28,39 @@
             zoom: 12
         });
     });
+
+    async function getWeatherOriginDestination(origin, destination) {
+		//console.log(PUBLIC_API_KEY);
+		//console.log(PUBLIC_URL+'/current.json?key='+PUBLIC_API_KEY+'&q='+lat+','+long+'&aqi=yes');
+
+		const fetchOriginWeatherPromise = await fetch(PUBLIC_URL+'/current.json?key='+PUBLIC_API_KEY+'&q='+ await origin[1]+','+await origin[0]+'&aqi=yes')
+		.then(response => {
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			console.log("Response received.")
+			return response.json();
+		}).then(json => {
+			console.log(json);
+            origin_weather = json;
+        }).catch(error => {
+			console.error('There was a problem with the fetch operation:', error);
+		});
+
+        const fetchDestinationWeatherPromise = await fetch(PUBLIC_URL+'/current.json?key='+PUBLIC_API_KEY+'&q='+ await destination[1]+','+await destination[0]+'&aqi=yes')
+		.then(response => {
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			console.log("Response received.")
+			return response.json();
+		}).then(json => {
+			console.log(json);
+            destination_weather = json;
+        }).catch(error => {
+			console.error('There was a problem with the fetch operation:', error);
+		});
+    }
 
     async function getRoute(originPlace, destinationPlace) {
         if (!originPlace || !destinationPlace) {
@@ -40,17 +77,19 @@
 
         const destinationCoords = await geocode(destinationPlace);
 
-        console.log(await originCoords + ', ' + await destinationCoords);
+        getWeatherOriginDestination(await originCoords, await destinationCoords);
         //console.log(`https://api.mapbox.com/directions/v5/mapbox/driving/${originCoords.join(',')};${destinationCoords.join(',')}?access_token=${mapboxgl.accessToken}`);
         const response = await fetch(
             `https://api.mapbox.com/directions/v5/mapbox/driving/${await originCoords.join(',')};${destinationCoords.join(',')}?geometries=geojson&steps=true&access_token=${mapboxgl.accessToken}`
         );
         const data = await response.json();
 
-        if (data.code === 'Ok' && data.routes.length > 0) {
-            const route = data.routes[0].geometry.coordinates;
+        if (await data.code === 'Ok' && await data.routes.length > 0) {
+            const route = await data.routes[0].geometry.coordinates;
+            console.log("Route: " + JSON.stringify(data.routes[0].legs[0]))
             const coordinates = extractCoordinatesAtInterval(data.routes[0], 1200);
             addPinsToMap(coordinates);
+            addPinsToMap([originCoords, destinationCoords])
             console.log("Coordinates at 20-minute intervals:", coordinates);
             const geojson = {
                 type: 'Feature',
@@ -189,15 +228,31 @@
 
 <div class="map" bind:this={mapContainer}></div>
 <form class="sidebar" on:submit|preventDefault={() => getRoute(origin, destination)}>
-    <label for="origin">Origin:</label>
-    <input type="text" id="origin" bind:value={origin} placeholder="Origin" required>
-
-    <label for="destination">Destination:</label>
-    <input type="text" id="destination" bind:value={destination} placeholder="Destination" required>
-
-    <button style="margin-right: 1vh;" on:click={getMyLocation}>Get My Position</button>
-    <button type="submit" class="plot-route">Plot Route</button>
+    <div class="row">
+        <div class="together">
+            <label for="origin">Origin:</label>
+            <input type="text" id="origin" bind:value={origin} placeholder="Origin" required>
+        </div>
+        <div class="together">
+            <label for="destination">Destination:</label>
+            <input type="text" id="destination" bind:value={destination} placeholder="Destination" required>
+        </div>
+    </div>
+    <button style="margin-right: 1vh;" on:click|preventDefault={() => getMyLocation()}>Get My Position</button>
+    <button style="margin-right: 1vh;" on:click|preventDefault={() => {origin = ''; destination = '';}}>Reset</button>
+    <button type="submit" class="plot-route" style="float: right">Plot Route</button>
 </form>
+<div class="contents">
+    <h2>Weather</h2>
+    {#if origin_weather}
+        <h3>Weather in {origin_weather.location.name}, {origin_weather.location.region}</h3>
+        <p>{origin_weather.current.condition.text}</p>
+    {/if}
+    {#if destination_weather}
+        <h3>Weather in {destination_weather.location.name}, {destination_weather.location.region}</h3>
+        <p>{destination_weather.current.condition.text}</p>
+    {/if}
+</div>
 
 <style>
     .map {
@@ -211,19 +266,35 @@
     .sidebar {
         background-color: rgb(35 55 75 / 90%);
         color: #fff;
-        padding: 2vh 2vw;
+        padding: 2vh 2vw 3vh 2vw;
         font-family: 'Urbanist', serif;
         z-index: 1;
         position: absolute;
         top: 0;
         left: 0;
-        margin: 0 1vw;
+        margin: 2vh 2vw;
         border-radius: 2vh;
+        width: 32vw;
+    }
+
+    .contents {
+        position: absolute;
+        top: 18vh;
+        left: 0;
+        width: 32vw;
+        margin: 2vh 2vw;
+        border-radius: 2vh;
+        padding: 1vh 2vw;
+        background-color: rgb(35 55 75 / 90%);
+        color: white;
+        z-index: 1;
+        font-family: 'Urbanist', serif;
     }
 
     .row{
         width: 100%;
-        gap: 2%;
+        gap: 2vw;
+        display: flex;
     }
     label{
         padding-bottom: 2vh;

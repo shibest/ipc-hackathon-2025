@@ -5,7 +5,10 @@
 
 <div class="content">
     <div class="block">
-        <h2 style="margin-bottom: -2vh">Current Alerts</h2>
+        <h2 style="margin-bottom: -2vh">Current Alerts ({#if alertState.alerts}
+                {alertState.alerts.alerts.alert.length}
+            {/if})
+        </h2>
         {#if alertState.alerts}
             <p>Alerts in the area of {alertState.alerts.location.name}, {alertState.alerts.location.region}, {alertState.alerts.location.country}.</p>
         {/if}
