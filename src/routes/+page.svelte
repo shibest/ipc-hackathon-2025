@@ -86,10 +86,9 @@
     .content{
         position: absolute;
         width: 60vw;
-        height: 90vh;
+        height: 84vh;
         margin-left: 20vw;
         margin-right: 20vw;
-        margin-top:5vh;
         overflow: auto;
     }
     .block{

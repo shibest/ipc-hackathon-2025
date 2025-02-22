@@ -693,14 +693,112 @@
     });
 </script>
 
-<div class="weather" style="background-color: {bg_color}; color: {txt_color}">
+<div class="weather" style="background-color: {bg_color}; color: {txt_color}" in:fade={{ duration: 200 }} out:fade={{ duration: 200 }}>
 	{#if weather && astronomy}
 		<!--<h1>Your Current Weather: {weather.current.condition.text}</h1>-->
+		{#if rain == 1}
+			<div class="anim_container">
+				{#each Array(5) as _, i}
+					<div class="droplet" style="animation-delay: {Math.random()*4}s; left: {Math.random()*100}vw;">
+					</div>
+				{/each}
+			</div>
+		{:else if rain == 2}
+			<div class="anim_container">
+				{#each Array(10) as _, i}
+					<div class="droplet" style="animation-delay: {Math.random()*4}s; left: {Math.random()*100}vw;">
+					</div>
+				{/each}
+			</div>
+		{:else if rain == 3}
+			<div class="anim_container">
+				{#each Array(30) as _, i}
+					<div class="droplet" style="animation-delay: {Math.random()*4}s; left: {Math.random()*100}vw;">
+					</div>
+				{/each}
+			</div>
+		{:else if rain == 4}
+			<div class="anim_container">
+				{#each Array(70) as _, i}
+					<div class="droplet" style="animation-delay: {Math.random()*4}s; left: {Math.random()*100}vw;">
+					</div>
+				{/each}
+			</div>
+		{/if}
+
+		{#if snow == 1}
+			<div class="anim_container">
+				{#each Array(10) as _, i}
+					<div class="flake" style="animation-delay: {Math.random()*8}s; left: {Math.random()*100}vw;">
+					</div>
+				{/each}
+			</div>
+		{:else if snow == 2}
+			<div class="anim_container">
+				{#each Array(20) as _, i}
+					<div class="flake" style="animation-delay: {Math.random()*8}s; left: {Math.random()*100}vw;">
+					</div>
+				{/each}
+			</div>
+		{:else if snow == 3}
+			<div class="anim_container">
+				{#each Array(40) as _, i}
+					<div class="flake" style="animation-delay: {Math.random()*8}s; left: {Math.random()*100}vw;">
+					</div>
+				{/each}
+			</div>
+		{:else if snow == 4}
+			<div class="anim_container">
+				{#each Array(80) as _, i}
+					<div class="flake" style="animation-delay: {Math.random()*8}s; left: {Math.random()*100}vw;">
+					</div>
+				{/each}
+			</div>
+		{/if}
+
 		{#if day}
+			{#if clouds == 0}
+				<div class="anim_container">
+					<div class="sun"></div>
+				</div>
+			{:else if clouds == 1 && snow == 0 && rain == 0 && ice_pellets == 0}
+				<div class="anim_container">
+					<div class="sun"></div>
+					{#each Array(10) as _, i}
+						<div class="cloud" style="animation-delay: {Math.random()*60}s; top: {Math.random()*80}vh; scale: {Math.random()+3}; animation-duration: {Math.random()*24+60}s;">
+							<div class="plume1" style="background-color: rgb(196, 196, 196);"></div>
+							<div class="plume2" style="background-color: rgb(193, 193, 193);"></div>
+							<div class="plume3" style="background-color: rgb(186, 186, 186);"></div>
+						</div>
+					{/each}
+				</div>
+			{:else if clouds == 2 && snow == 0 && rain == 0 && ice_pellets == 0}
+				<div class="sun"></div>
+				<div class="anim_container">
+					{#each Array(40) as _, i}
+						<div class="cloud" style="animation-delay: {Math.random()*60}s; top: {Math.random()*80}vh; scale: {Math.random()+3}; animation-duration: {Math.random()*24+60}s;">
+							<div class="plume1" style="background-color: rgb(196, 196, 196);"></div>
+							<div class="plume2" style="background-color: rgb(193, 193, 193);"></div>
+							<div class="plume3" style="background-color: rgb(186, 186, 186);"></div>
+						</div>
+					{/each}
+				</div>
+			{:else if clouds == 3 && snow == 0 && rain == 0 && ice_pellets == 0}
+				<div class="sun"></div>
+				<div class="anim_container">
+					{#each Array(80) as _, i}
+						<div class="cloud" style="animation-delay: {Math.random()*60}s; top: {Math.random()*80}vh; scale: {Math.random()+3}; animation-duration: {Math.random()*24+60}s;">
+							<div class="plume1" style="background-color: rgb(196, 196, 196);"></div>
+							<div class="plume2" style="background-color: rgb(193, 193, 193);"></div>
+							<div class="plume3" style="background-color: rgb(186, 186, 186);"></div>
+						</div>
+					{/each}
+				</div>
+			{/if}
 		{:else}
 			<!--Show stars if no clouds-->
 			{#if clouds == 0}
-				<div class="stars">
+				<div class="anim_container">
 					{#each Array(69) as _, i}
 						<div class="star" style="left: {Math.random()*100}vw; top: {Math.random()*100}vh; animation-duration: {Math.random()*3+1}s">
 						</div>
@@ -709,6 +807,16 @@
 			{/if}
 		{/if}
 	{/if}
+</div>
+<div class="navbar">
+	<div class="bar">
+		<a href="/" class="routeL">name</a>
+		<div class="right" style="float:right">
+			<a href="/" class="route">Now</a>
+			<a class="route">Forecast</a>
+			<a class="routeR">Trip Planner</a>
+		</div>
+	</div>
 </div>
 {#key data.pathname}
 	<div class="main" in:fade={{ duration: 200 }} out:fade={{ duration: 200 }}>
@@ -723,11 +831,20 @@
 		left: 0;
 		height: 100%;
 		width: 100%;
-		z-index: -2;
+		z-index: -3;
 		overflow: hidden;
 		transition: .2s;
 	}
-	.stars{
+	.sun{
+		position: inherit;
+		top: 15vh;
+		left: 41.5vw;
+		width: 30vh;
+		height: 30vh;
+		border-radius: 20vh;
+		background-color: rgb(255, 240, 154);
+	}
+	.anim_container{
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -743,12 +860,89 @@
 		border-radius: 1vh;
 		animation: pulse 2s infinite ease-in-out;
 	}
+	.cloud{
+		position: inherit;
+		top: 5vw;
+		left: -30vw;
+		scale: 4;
+		animation: drift 15s infinite linear;
+	}
+	.plume1{
+		position: inherit;
+		background-color: rgb(193, 193, 193);
+		width: 8vh;
+		height: 8vh;
+		border-radius: 8vh;
+		left: 2.5vh;
+	}
+	.plume2{
+		position: inherit;
+		background-color: rgb(196, 196, 196);
+		width: 5vh;
+		height: 5vh;
+		border-radius: 5vh;
+		top: 2.5vh;
+		z-index: -1;
+	}
+	.plume3{
+		position: inherit;
+		background-color: rgb(186, 186, 186);
+		width: 7vh;
+		height: 7vh;
+		border-radius: 7vh;
+		left: 6vh;
+		top: 1vh;
+		z-index: -1;
+	}
+	.droplet{
+		position: inherit;
+		background-color: rgba(255,255,255,.4);
+		height: 2vh;
+		width: .2vh;
+		top: -5vh;
+		border-radius: 1vh;
+		animation: fall .5s infinite linear;
+	}
+	.flake{
+		position: inherit;
+		background-color: rgba(255,255,255,.7);
+		height: .5vh;
+		width: .5vh;
+		top: -5vh;
+		border-radius: 1vh;
+		animation: fall 5s infinite linear;
+	}
 
-
+	.navbar{
+		position: absolute;
+		top: 2vh;
+		left: 0;
+		margin: 0 20vw;
+		width: 60vw;
+		height: 3vh;
+	}
+	.bar{
+		display: inline-block;
+		padding: 2vh 2vw;
+		border-radius: 2vh;
+		background-color: rgba(255,255,255,.6);
+        backdrop-filter: blur(2vh);
+		width: 100%;
+	}
+	.route {
+		padding: 0 1vw;
+	}
+	.routeL {
+		padding-right: 1vw;
+	}
+	.routeR {
+		padding-left: 1vw; 
+	}
 	.main{
 		position: absolute;
-		top: 0;
+		top: 12vh;
 		left:0;
+		height: 84vh;
 	}
 	.gg {
 		background-color: rgb(10, 12, 31);
@@ -762,5 +956,14 @@
 
 		100% { transform: scale(1); }
 
+	}
+
+	@keyframes drift {
+
+		100% { transform: translateX(1000px);}
+	}
+
+	@keyframes fall {
+		100% { transform: translateY(110vh); }
 	}
 </style>
