@@ -804,6 +804,42 @@
 						</div>
 					{/each}
 				</div>
+				{:else if clouds == 1 && snow == 0 && rain == 0 && ice_pellets == 0}
+				<div class="anim_container">
+					{#each Array(69) as _, i}
+						<div class="star" style="left: {Math.random()*100}vw; top: {Math.random()*100}vh; animation-duration: {Math.random()*3+1}s">
+						</div>
+					{/each}
+					{#each Array(10) as _, i}
+						<div class="cloud" style="animation-delay: {Math.random()*60}s; top: {Math.random()*80}vh; scale: {Math.random()+3}; animation-duration: {Math.random()*24+60}s;">
+							<div class="plume1" style="background-color: rgb(96, 96, 96);"></div>
+							<div class="plume2" style="background-color: rgb(93, 93, 93);"></div>
+							<div class="plume3" style="background-color: rgb(86, 86, 86);"></div>
+						</div>
+					{/each}
+				</div>
+			{:else if clouds == 2 && snow == 0 && rain == 0 && ice_pellets == 0}
+				<div class="sun"></div>
+				<div class="anim_container">
+					{#each Array(40) as _, i}
+						<div class="cloud" style="animation-delay: {Math.random()*60}s; top: {Math.random()*80}vh; scale: {Math.random()+3}; animation-duration: {Math.random()*24+60}s;">
+							<div class="plume1" style="background-color: rgb(96, 96, 96);"></div>
+							<div class="plume2" style="background-color: rgb(93, 93, 93);"></div>
+							<div class="plume3" style="background-color: rgb(86, 86, 86);"></div>
+						</div>
+					{/each}
+				</div>
+			{:else if clouds == 3 && snow == 0 && rain == 0 && ice_pellets == 0}
+				<div class="sun"></div>
+				<div class="anim_container">
+					{#each Array(80) as _, i}
+						<div class="cloud" style="animation-delay: {Math.random()*60}s; top: {Math.random()*80}vh; scale: {Math.random()+3}; animation-duration: {Math.random()*24+60}s;">
+							<div class="plume1" style="background-color: rgb(96, 96, 96);"></div>
+							<div class="plume2" style="background-color: rgb(93, 93, 93);"></div>
+							<div class="plume3" style="background-color: rgb(86, 86, 86);"></div>
+						</div>
+					{/each}
+				</div>
 			{/if}
 		{/if}
 	{/if}
@@ -813,8 +849,8 @@
 		<a href="/" class="routeL">name</a>
 		<div class="right" style="float:right">
 			<a href="/" class="route">Now</a>
-			<a class="route">Forecast</a>
-			<a class="routeR">Trip Planner</a>
+			<a href="/forecast" class="route">Forecast</a>
+			<a href="/tripplanner" class="routeR">Trip Planner</a>
 		</div>
 	</div>
 </div>

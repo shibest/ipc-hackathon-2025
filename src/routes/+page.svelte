@@ -1,7 +1,7 @@
 <script>
     import {weatherState, iconState, astronomyState} from '$lib/state.svelte';
 
-    import {Moon, CloudMoon, Sun, CloudSun, CloudRain, CloudSnow, CloudFog, CloudLightning, Cloud} from 'phosphor-svelte';
+    import {Moon, CloudMoon, Sun, CloudSun, CloudRain, CloudSnow, CloudFog, CloudLightning, Cloud, ArrowClockwise} from 'phosphor-svelte';
 
     let greeting = "morning";
     let now = new Date();
@@ -41,6 +41,7 @@
         {#if weatherState.weather}
             <p>Last refreshed: {timeFormatted(weatherState.weather.location.localtime.slice(11))}</p>
         {/if}
+        <a href="/" class="refresh-button" data-sveltekit-reload><ArrowClockwise /></a>
         <div class="row">
             <div class="title">
                 {#if weatherState.weather}
@@ -96,6 +97,23 @@
         backdrop-filter: blur(2vh);
         border-radius: 2vh;
         padding: 2vh 2vw;
+    }
+    .refresh-button {
+        position: absolute;
+        left: 90%;
+        top: 17.5%;
+        width: 6vh;
+        height: 6vh;
+        padding: 1.5vh;
+        background-color: rgba(255,255,255,.4);
+        border-radius: 6vh;
+        font-size: 3vh;
+        transition: .2s;
+        color: black;
+    }
+    .refresh-button:hover{
+        cursor: pointer;
+        background-color: rgba(255,255,255,1);
     }
     .row {
         display: flex;
