@@ -6,6 +6,8 @@
     import { onMount } from 'svelte';
     import mapboxgl from 'mapbox-gl';
 
+    import {weatherState} from '$lib/state.svelte';
+
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_API_KEY;
 
     let map;
@@ -28,12 +30,20 @@
             alert("Please enter both origin and destination.");
             return;
         }
+        let originCoords;
 
-        const originCoords = await geocode(originPlace);
+        if (originPlace === 'My Location') {
+            originCoords = await getPosition();;
+        } else {
+            originCoords = await geocode(originPlace);
+        }
+
         const destinationCoords = await geocode(destinationPlace);
+
+        console.log(await originCoords + ', ' + await destinationCoords);
         //console.log(`https://api.mapbox.com/directions/v5/mapbox/driving/${originCoords.join(',')};${destinationCoords.join(',')}?access_token=${mapboxgl.accessToken}`);
         const response = await fetch(
-            `https://api.mapbox.com/directions/v5/mapbox/driving/${originCoords.join(',')};${destinationCoords.join(',')}?geometries=geojson&steps=true&access_token=${mapboxgl.accessToken}`
+            `https://api.mapbox.com/directions/v5/mapbox/driving/${await originCoords.join(',')};${destinationCoords.join(',')}?geometries=geojson&steps=true&access_token=${mapboxgl.accessToken}`
         );
         const data = await response.json();
 
@@ -118,6 +128,34 @@
         return coordinates;
     }
 
+    async function getPosition() {
+		// default position in case geolocation fails
+		let userLocation = [-122.205, 47.613];
+		// get user location if possible
+		try {
+			const position = await new Promise((resolve, reject) => {
+				if (!navigator.geolocation) {
+					reject(new Error('Geolocation not supported'));
+				}
+				navigator.geolocation.getCurrentPosition(
+					(position) => resolve(position),
+					(error) => reject(error),
+					{
+						enableHighAccuracy: true
+					}
+				);
+			});
+			userLocation = [position.coords.longitude, position.coords.latitude];
+			console.log('Got position:', position);
+		} catch (error) {
+			console.warn('Failed to get location:', error);
+		}
+        return userLocation;
+    }
+    function getMyLocation(){
+        origin = "My Location"
+    }
+
     function interpolateCoordinates(geometry, percentage) {
         if (geometry.length < 2) {
             return geometry[0];
@@ -157,6 +195,7 @@
     <label for="destination">Destination:</label>
     <input type="text" id="destination" bind:value={destination} placeholder="Destination" required>
 
+    <button style="margin-right: 1vh;" on:click={getMyLocation}>Get My Position</button>
     <button type="submit" class="plot-route">Plot Route</button>
 </form>
 
@@ -172,22 +211,39 @@
     .sidebar {
         background-color: rgb(35 55 75 / 90%);
         color: #fff;
-        padding: 6px 12px;
-        font-family: monospace;
+        padding: 2vh 2vw;
+        font-family: 'Urbanist', serif;
         z-index: 1;
         position: absolute;
         top: 0;
         left: 0;
-        margin: 12px;
-        border-radius: 4px;
+        margin: 0 1vw;
+        border-radius: 2vh;
     }
 
-    .plot-route {
-        top: 50px;
-        z-index: 1;
-        left: 12px;
-        padding: 4px 10px;
-        border-radius: 10px;
+    .row{
+        width: 100%;
+        gap: 2%;
+    }
+    label{
+        padding-bottom: 2vh;
+    }
+    input{
+        margin-bottom: 2vh;
+        font-family: 'Urbanist', serif;
+        font-size: 1rem;
+    }
+    button{
+        flex: 49%;
+        font-family: 'Urbanist', serif;
+        border: none;
+        padding: .6vh .6vw;
+        border-radius: 1vh;
         cursor: pointer;
+        background-color: white;
+        transition: .2s;
+    }
+    button:hover{
+        background-color: rgb(199, 199, 199);
     }
 </style>
