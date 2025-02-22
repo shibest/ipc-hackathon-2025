@@ -1,43 +1,16 @@
 <div class="content">
     <div class="block">
         <h2 style="margin-bottom:-2vh;">Guide and Resources</h2>
-        <p>For those facing adverse weather conditions</p>
+        <p>For those facing adverse weather conditions - provided by Gemini</p>
     </div>
     <br>
     <div class="block">
-        <h2>Wildfires</h2>
+        <p>Gemini generated response that goes over possible hazardous conditions that might happen in user's area, how to prepare for it, what to do when it happens, resources to contact</p>
     </div>
-    <br>
-    <div class="block">
-        <h2>Floods</h2>
-    </div>
-    <br>
-    <div class="block">
-        <h2>Large Snowstorms</h2>
-    </div>
-    <br>
-    <div class="block">
-        <h2>Windstorms</h2>
-    </div>
-    <br>
-    <div class="block">
-        <h2>Hurricanes/Typhoons/Tornadoes</h2>
-    </div>
-    <br>
-    <div class="block">
-        <h2>Earthquakes</h2>
-    </div>
-    <br>
-    <div class="block">
-        <h2>Tsunamis</h2>
-    </div>
-    <br>
-    <div class="block">
-        <h2>Landslides/Mudslides</h2>
-    </div>
-    <br>
-    <div class="block">
-        <h2>Raining Bombs/Missiles</h2>
+</div>
+<div class="inquiry">
+    <div class="inquire">
+        <p>Prompt: (turn this into textbox which on enter sends prompt to gemini for extra questions user may have)</p>
     </div>
 </div>
 
@@ -45,10 +18,26 @@
     .content{
         position: absolute;
         width: 60vw;
-        height: 84vh;
+        height: 76vh;
         margin-left: 20vw;
         margin-right: 20vw;
         overflow: auto;
+    }
+    .inquiry{
+        position: absolute;
+        width: 60vw;
+        height: 8vh;
+        margin-left: 20vw;
+        margin-right: 20vw;
+        overflow: auto;
+        top: auto;
+        bottom: -2vh;
+    }
+    .inquire{
+        background-color: rgba(255,255,255,.6);
+        backdrop-filter: blur(2vh);
+        border-radius: 2vh;
+        padding: .5vh 2vw;
     }
     .block{
         background-color: rgba(255,255,255,.6);
