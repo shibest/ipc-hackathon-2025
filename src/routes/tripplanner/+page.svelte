@@ -238,8 +238,8 @@
             <input type="text" id="destination" bind:value={destination} placeholder="Destination" required>
         </div>
     </div>
-    <button style="margin-right: 1vh;" on:click|preventDefault={() => getMyLocation()}>Get My Position</button>
-    <button style="margin-right: 1vh;" on:click|preventDefault={() => {origin = ''; destination = '';}}>Reset</button>
+    <button type="button" style="margin-right: 1vh;" on:click|preventDefault={() => getMyLocation()}>Get My Position</button>
+    <button type="button" style="margin-right: 1vh;" on:click|preventDefault={() => {origin = ''; destination = '';}}>Reset</button>
     <button type="submit" class="plot-route" style="float: right">Plot Route</button>
 </form>
 <div class="contents">
