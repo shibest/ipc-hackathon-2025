@@ -99,6 +99,22 @@
         </div>
         <div class="blocks">
             <h2>Advisories</h2>
+            {#if weatherState.danger}
+                {#if weatherState.danger === 'freezing'}
+                    <p>Freeze Warning</p>
+                {/if}
+                {#if weatherState.danger === 'road'}
+                    <p>Road Conditions Warning</p>
+                {/if}
+                {#if weatherState.danger === 'visibility'}
+                    <p>Visilibity Warning</p>
+                {/if}
+                {#if weatherState.danger === 'storm'}
+                    <p>Storm Warning</p>
+                {/if}
+            {:else}
+                <p>No advisories currently.</p>
+            {/if}
         </div>
     </div>
     <br>
@@ -128,8 +144,8 @@
     }
     .refresh-button {
         position: absolute;
-        left: 90%;
-        top: 17.5%;
+        left: 92.5%;
+        top: 15%;
         width: 6vh;
         height: 6vh;
         padding: 1.5vh;
