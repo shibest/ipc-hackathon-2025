@@ -1,6 +1,7 @@
 <script>
-    import {weatherState, iconState, astronomyState, geminiOutputState} from '$lib/state.svelte';
-    import {Moon, CloudMoon, Sun, CloudSun, CloudRain, CloudSnow, CloudFog, CloudLightning, Cloud, ArrowClockwise} from 'phosphor-svelte';
+	import { goto } from '$app/navigation';
+    import {weatherState, iconState, alertState, astronomyState, geminiOutputState} from '$lib/state.svelte';
+    import {Moon, CloudMoon, Sun, CloudSun, CloudRain, CloudSnow, CloudFog, CloudLightning, Cloud, ArrowClockwise, Warning, Info, ArrowSquareOut} from 'phosphor-svelte';
 
     let greeting = "morning";
     let now = new Date();
@@ -98,19 +99,18 @@
         </div>
         <div class="blocks">
             <h2>Advisories</h2>
-            {#if weatherState.danger}
-                {#if weatherState.danger === 'freezing'}
-                    <p>Freeze Warning</p>
-                {/if}
-                {#if weatherState.danger === 'road'}
-                    <p>Road Conditions Warning</p>
-                {/if}
-                {#if weatherState.danger === 'visibility'}
-                    <p>Visilibity Warning</p>
-                {/if}
-                {#if weatherState.danger === 'storm'}
-                    <p>Storm Warning</p>
-                {/if}
+            {#if alertState.alerts}
+                {#each alertState.alerts.alerts.alert as _, i}
+                    <p class="alert-link taut" on:click={() => goto('/alerts')}>
+                        {#if alertState.alerts.alerts.alert[i].severity === 'Severe'}
+                            <Warning />
+                        {:else}
+                            <Info />
+                        {/if}
+                        {alertState.alerts.alerts.alert[i].event}
+                        <ArrowSquareOut />
+                    </p>
+                {/each}
             {:else}
                 <p>No advisories currently.</p>
             {/if}
@@ -188,7 +188,16 @@
         flex: 25%;
     }
     .taut {
-        margin-bottom: -2vh;
+        margin-bottom: -1vh;
+    }
+    .alert-link{
+        color: black;
+        transition: .2s;
+    }
+    .alert-link:hover {
+        cursor: pointer;
+        color: rgb(157, 157, 157);
+        text-decoration: underline;
     }
 
     ::-webkit-scrollbar {

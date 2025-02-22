@@ -1,7 +1,7 @@
 <script>
 	import { PUBLIC_API_KEY, PUBLIC_URL, PUBLIC_GEMINI_API_KEY } from '$env/static/public';
 	import { onMount } from "svelte";
-	import { weatherState, iconState, forecastState, astronomyState, geminiOutputState } from '$lib/state.svelte';
+	import { weatherState, iconState, alertState, forecastState, astronomyState, geminiOutputState } from '$lib/state.svelte';
 	import { GoogleGenerativeAI } from "@google/generative-ai";
 
 	import '../app.css'
@@ -697,6 +697,24 @@
 		});
 	}
 
+	async function getAlertsToday() {
+		const position = await getPosition();
+
+		const fetchAlertPromise = await fetch(PUBLIC_URL+'/alerts.json?key='+PUBLIC_API_KEY+'&q='+ await position[1]+','+await position[0])
+		.then(response => {
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			console.log("Response received.")
+			return response.json();
+		}).then(json => {
+			console.log(json);
+			alertState.alerts = json;
+		}).catch(error => {
+			console.error('There was a problem with the fetch operation:', error);
+		});
+	}
+
     async function getPosition() {
 		// default position in case geolocation fails
 		let userLocation = [-122.205, 47.613];
@@ -724,9 +742,9 @@
 	}
 
     onMount(async () => {
-		//console.log(getWeatherFromPosition());
 		getCurrentWeather();
 		getWeatherForecast();
+		getAlertsToday();
 
 		/*if (current_weather.currrent.condition === "Overcast") {
 			bg_color = "gray";
@@ -951,7 +969,6 @@
 					{/each}
 				</div>
 			{:else if clouds == 2 && snow == 0 && rain == 0 && ice_pellets == 0}
-				<div class="sun"></div>
 				<div class="anim_container">
 					{#each Array(40) as _, i}
 						<div class="cloud" style="animation-delay: {Math.random()*60}s; top: {Math.random()*80}vh; scale: {Math.random()+3}; animation-duration: {Math.random()*24+60}s;">
@@ -962,7 +979,6 @@
 					{/each}
 				</div>
 			{:else if clouds == 3 && snow == 0 && rain == 0 && ice_pellets == 0}
-				<div class="sun"></div>
 				<div class="anim_container">
 					{#each Array(80) as _, i}
 						<div class="cloud" style="animation-delay: {Math.random()*60}s; top: {Math.random()*80}vh; scale: {Math.random()+3}; animation-duration: {Math.random()*24+60}s;">
@@ -1026,6 +1042,7 @@
 		<div class="right" style="float:right">
 			<a href="/" class="route">Now</a>
 			<a href="/forecast" class="route">Forecast</a>
+			<a href="/alerts" class="route">Alerts</a>
 			<a href="/tripplanner" class="router">Trip Planner</a>
 			<a href="/help" class="routeR">Help</a>
 		</div>
@@ -1049,9 +1066,9 @@
 		transition: .2s;
 	}
 	.sun{
-		position: inherit;
-		top: 15vh;
-		left: 41.5vw;
+		position: absolute;
+		top: 7.5vh;
+		left: 15vw;
 		width: 30vh;
 		height: 30vh;
 		border-radius: 20vh;
