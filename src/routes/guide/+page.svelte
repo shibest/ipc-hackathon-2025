@@ -33,7 +33,7 @@
 <div class="content">
     <div class="block">
         <h2 style="margin-bottom:-2vh;">Guide and Resources</h2>
-        <p>For those facing adverse weather conditions - provided by Google Gemini</p>
+        <p>Provided by Google Gemini</p>
         {#if weatherAdvisoryGeminiOutput.result}
             <p>{weatherAdvisoryGeminiOutput.result}</p>
         {/if}
