@@ -85,7 +85,7 @@
 
         if (await data.code === 'Ok' && await data.routes.length > 0) {
             const route = await data.routes[0].geometry.coordinates;
-            const coordinates = extractCoordinatesAtInterval(data.routes[0], 1200);
+            const coordinates = await extractCoordinatesAtInterval(data.routes[0], 3600);
             addPinsToMap(coordinates);
             //addPinsToMap([originCoords, destinationCoords])
             console.log("Coordinates at 20-minute intervals:", coordinates);
@@ -138,11 +138,13 @@
         }
     }
 
-    function extractCoordinatesAtInterval(route, intervalSeconds) {
-        const coordinates = [];
+    async function extractCoordinatesAtInterval(route, intervalSeconds) {
+        let coordinates = [];
         let accumulatedDuration = 0;
         let currentStepIndex = 0;
-        let nextInterval = intervalSeconds;
+        const now = new Date();
+        const nextHour = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 1, 0, 0);
+        let nextInterval = Math.round((nextHour.getTime() - now.getTime()) / 1000);
 
         while (currentStepIndex < route.legs[0].steps.length) {
             const step = route.legs[0].steps[currentStepIndex];
@@ -154,15 +156,34 @@
                 const percentage = timeDifference / stepDuration;
 
                 const interpolatedCoordinates = interpolateCoordinates(stepGeometry, percentage);
-                coordinates.push(interpolatedCoordinates);
+                const intervalDatetime = new Date(now.getTime() + (accumulatedDuration + timeDifference) * 1000);
 
-                nextInterval += intervalSeconds;
+                const city = await getCityName(interpolatedCoordinates); 
+
+                coordinates.push([interpolatedCoordinates, intervalDatetime, city])
+
+                nextInterval += 3600; 
             }
 
             accumulatedDuration += stepDuration;
             currentStepIndex++;
         }
+        console.log("coordinates")
+        console.log(coordinates);
         return coordinates;
+    }
+
+    async function getCityName(coordinates) {
+        const response = await fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${coordinates.join(',')}.json?types=place&access_token=${mapboxgl.accessToken}`
+        );
+        const data = await response.json();
+
+        if (data.features && data.features.length > 0) {
+            return data.features.text || data.features.place_name; 
+        } else {
+            return "Unknown City";
+        }
     }
 
     async function getPosition() {
@@ -211,13 +232,14 @@
     }
 
     function addPinsToMap(coordinates) { // testing function
+        console.log(coordinates);
         markers.forEach(marker => marker.remove());
         markers = [];
 
-        coordinates.forEach((coord, index) => {
+        coordinates.forEach((coordinate, index) => {
             const marker = new mapboxgl.Marker()
-              .setLngLat(coord)
-              .setPopup(new mapboxgl.Popup().setHTML(`<h3>Waypoint ${index + 1}</h3>`))
+              .setLngLat(coordinate[0])
+              .setPopup(new mapboxgl.Popup().setHTML(`<h3>Time: ${coordinate[1]}}. City: ${coordinate[2]}</h3>`))
               .addTo(map);
             markers.push(marker);
         });
