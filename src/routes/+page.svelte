@@ -119,7 +119,7 @@
     <br>
     <div class="block">
         <h2 style="margin-bottom:-2vh;">Things To Do</h2>
-        <p>Provided by Gemini</p>
+        <p>Provided by Google Gemini</p>
         {#if thingsToDoGeminiOutput.result}
             <p>{thingsToDoGeminiOutput.result}</p>
         {/if}

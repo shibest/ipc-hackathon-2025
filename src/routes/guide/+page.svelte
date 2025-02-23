@@ -29,7 +29,7 @@
 <div class="content">
     <div class="block">
         <h2 style="margin-bottom:-2vh;">Guide and Resources</h2>
-        <p>For those facing adverse weather conditions - provided by Gemini</p>
+        <p>For those facing adverse weather conditions - provided by Google Gemini</p>
         {#if weatherAdvisoryGeminiOutput.result}
             <p>{weatherAdvisoryGeminiOutput.result}</p>
         {/if}
@@ -118,7 +118,7 @@
         font-size: 2vh;
     }
     button:hover{
-        background-color: white;
+        background-color: rgba(255, 255, 255, 0.9);
         cursor:pointer;
     }
 
