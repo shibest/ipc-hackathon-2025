@@ -1057,7 +1057,7 @@
 			<a href="/forecast" class="route" title="Forecast">Forecast</a>
 			<a href="/alerts" class="route" title="Alerts">Alerts</a>
 			<a href="/tripplanner" class="router" title="Trip Planner">Trip Planner</a>
-			<a href="/help" class="routeR" title="Help">Help</a>
+			<a href="/guide" class="routeR" title="Guide">Guide</a>
 		</div>
 	</div>
 </div>

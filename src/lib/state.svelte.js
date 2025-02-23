@@ -5,3 +5,4 @@ export let iconState = $state({ icon: null });
 export let astronomyState = $state({ astronomy: null });
 export let thingsToDoGeminiOutput = $state({ result: 'Generating...' });
 export let weatherAdvisoryGeminiOutput = $state({ result: 'Generating...' });
+export let conversationGeminiOutput = $state({prompts: [], responses: []})
