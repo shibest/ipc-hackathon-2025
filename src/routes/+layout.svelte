@@ -1005,6 +1005,12 @@
 					{/each}
 				</div>
 			{/if}
+			{#if thunder}
+				<div class="anim_container">
+					<div class="flash">
+					</div>
+				</div>
+			{/if}
 		{:else}
 			<!--Show stars if no clouds-->
 			{#if clouds == 0}
@@ -1047,6 +1053,12 @@
 							<div class="plume3" style="background-color: rgb(86, 86, 86);"></div>
 						</div>
 					{/each}
+				</div>
+			{/if}
+			{#if thunder}
+				<div class="anim_container">
+					<div class="flash">
+					</div>
 				</div>
 			{/if}
 		{/if}
@@ -1097,6 +1109,14 @@
 		width: 100%;
 		height: 100%;
 		overflow: hidden;
+	}
+	.flash{
+		position: inherit;
+		width: 100%;
+		height: 100%;
+		background-color: white;
+		animation: flash 10s infinite linear;
+		opacity: 100;
 	}
 	.star{
 		position: inherit;
@@ -1232,5 +1252,18 @@
 
 	@keyframes fall {
 		100% { transform: translateY(120vh); }
+	}
+
+	@keyframes flash {
+		0% {opacity: 0;}
+		15% {opacity:0;}
+		16% {opacity:1;}
+		25% {opacity:0;}
+		65% {opacity:0;}
+		66% {opacity:1}
+		69% {opacity:.2}
+		70% {opacity:1}
+		80% {opacity: 0}
+		100% {opacity:0;}
 	}
 </style>
