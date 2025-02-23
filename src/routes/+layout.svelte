@@ -1,7 +1,7 @@
 <script>
 	import { PUBLIC_API_KEY, PUBLIC_URL, PUBLIC_GEMINI_API_KEY } from '$env/static/public';
 	import { onMount } from "svelte";
-	import { weatherState, iconState, alertState, forecastState, astronomyState, geminiOutputState } from '$lib/state.svelte';
+	import { weatherState, iconState, alertState, forecastState, astronomyState, thingsToDoGeminiOutput, weatherAdvisoryGeminiOutput } from '$lib/state.svelte';
 	import { GoogleGenerativeAI } from "@google/generative-ai";
 	import { SunHorizon } from 'phosphor-svelte';
 
@@ -33,25 +33,37 @@
 
 	const api_key = PUBLIC_GEMINI_API_KEY;
 
-	async function callGemini(weathering) {
+	async function callGeminiThingsToDo(weathering) {
 		let now = new Date();
         console.log("weathering");
 		console.log(weathering);
 
 		const genAI = new GoogleGenerativeAI(api_key);
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-		let prompt = "Give me some suggestions of what I can do today with the date and time being " + now + ", the weather being " + weathering.current.condition.text + ', the temperature outside being ' + weathering.current.temp_f +' degrees fahrenheit, and the location being ' + weathering.location.name + ' ' + weathering.location.region + ', ' + weathering.location.country + '. Give me a paragraph. Don\'t say here are some suggestions.';
+		let prompt = "Give me some suggestions of what I can do today? Date and time: " + now + ". Weather: " + weathering.current.condition.text + '. Outside temperature: ' + weathering.current.temp_f +' degrees fahrenheit. Location: ' + weathering.location.name + ' ' + weathering.location.region + ', ' + weathering.location.country + '. Give me a paragraph. Don\'t say here are some suggestions.';
         try {
             const response = await model.generateContent(prompt);
-            geminiOutputState.result = await response.response.text();
+            thingsToDoGeminiOutput.result = await response.response.text();
+        } catch (e) {
+            console.error(e);
+        }
+	}
+
+    async function callGeminiWeatherAdvisory(weathering) {
+		let now = new Date();
+
+		const genAI = new GoogleGenerativeAI(api_key);
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+		let prompt =  "What weather-related preperation should I make with these conditions? Date and time: " + now + ". Weather: " + weathering.current.condition.text + '. Outside temperature: ' + weathering.current.temp_f +' degrees fahrenheit. Location: ' + weathering.location.name + ' ' + weathering.location.region + ', ' + weathering.location.country + '. Give me a paragraph. Don\'t say here are some suggestions.';
+        try {
+            const response = await model.generateContent(prompt);
+            weatherAdvisoryGeminiOutput.result = await response.response.text();
         } catch (e) {
             console.error(e);
         }
 	}
 
 	async function getCurrentWeather() {
-		//console.log(PUBLIC_API_KEY);
-		//console.log(PUBLIC_URL+'/current.json?key='+PUBLIC_API_KEY+'&q='+lat+','+long+'&aqi=yes');
 		const position = await getPosition();
 
 		const fetchWeatherPromise = await fetch(PUBLIC_URL+'/current.json?key='+PUBLIC_API_KEY+'&q='+ await position[1]+','+await position[0]+'&aqi=yes')
@@ -66,8 +78,12 @@
 			weather = json;
 			weatherState.weather = json;
 			//console.log("Weather: " + weather.current.condition.text);
-			if (geminiOutputState.result === 'Generating...') {
-				callGemini(weather);
+			if (thingsToDoGeminiOutput.result === 'Generating...') {
+				callGeminiThingsToDo(weather);
+			}
+
+            if (weatherAdvisoryGeminiOutput.result === 'Generating...') {
+				callGeminiWeatherAdvisory(weather);
 			}
 
 			//check if day/night

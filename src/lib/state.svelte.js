@@ -3,4 +3,5 @@ export let forecastState = $state({ forecast: null, icons: null , hour_icons: nu
 export let alertState = $state({ alerts: null });
 export let iconState = $state({ icon: null });
 export let astronomyState = $state({ astronomy: null });
-export let geminiOutputState = $state({ result: 'Generating...' });
+export let thingsToDoGeminiOutput = $state({ result: 'Generating...' });
+export let weatherAdvisoryGeminiOutput = $state({ result: 'Generating...' });

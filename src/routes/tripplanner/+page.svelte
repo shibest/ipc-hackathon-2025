@@ -32,9 +32,6 @@
     });
 
     async function getWeatherOriginDestination(origin, destination) {
-		//console.log(PUBLIC_API_KEY);
-		//console.log(PUBLIC_URL+'/current.json?key='+PUBLIC_API_KEY+'&q='+lat+','+long+'&aqi=yes');
-
 		const fetchOriginWeatherPromise = await fetch(PUBLIC_URL+'/current.json?key='+PUBLIC_API_KEY+'&q='+ await origin[1]+','+await origin[0]+'&aqi=yes')
 		.then(response => {
 			if (!response.ok) {
@@ -88,10 +85,9 @@
 
         if (await data.code === 'Ok' && await data.routes.length > 0) {
             const route = await data.routes[0].geometry.coordinates;
-            console.log("Route: " + JSON.stringify(data.routes[0].legs[0]))
             const coordinates = extractCoordinatesAtInterval(data.routes[0], 1200);
             addPinsToMap(coordinates);
-            addPinsToMap([originCoords, destinationCoords])
+            //addPinsToMap([originCoords, destinationCoords])
             console.log("Coordinates at 20-minute intervals:", coordinates);
             const geojson = {
                 type: 'Feature',

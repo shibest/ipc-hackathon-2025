@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-    import {weatherState, iconState, alertState, astronomyState, geminiOutputState} from '$lib/state.svelte';
+    import {weatherState, iconState, alertState, astronomyState, thingsToDoGeminiOutput} from '$lib/state.svelte';
     import {Moon, CloudMoon, Sun, CloudSun, CloudRain, CloudSnow, CloudFog, CloudLightning, Cloud, ArrowClockwise, Warning, Info, ArrowSquareOut} from 'phosphor-svelte';
 
     let greeting = "morning";
@@ -120,8 +120,8 @@
     <div class="block">
         <h2 style="margin-bottom:-2vh;">Things To Do</h2>
         <p>Provided by Gemini</p>
-        {#if geminiOutputState.result}
-            <p>{geminiOutputState.result}</p>
+        {#if thingsToDoGeminiOutput.result}
+            <p>{thingsToDoGeminiOutput.result}</p>
         {/if}
     </div>
 </div>

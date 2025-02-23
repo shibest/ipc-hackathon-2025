@@ -1,7 +1,15 @@
+<script>
+    import {weatherAdvisoryGeminiOutput} from '$lib/state.svelte';
+
+</script>
+
 <div class="content">
     <div class="block">
         <h2 style="margin-bottom:-2vh;">Guide and Resources</h2>
         <p>For those facing adverse weather conditions - provided by Gemini</p>
+        {#if weatherAdvisoryGeminiOutput.result}
+            <p>{weatherAdvisoryGeminiOutput.result}</p>
+        {/if}
     </div>
     <br>
     <div class="block">
