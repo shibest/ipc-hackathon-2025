@@ -88,7 +88,6 @@
             const coordinates = await extractCoordinatesAtInterval(data.routes[0], 3600);
             addPinsToMap(coordinates);
             //addPinsToMap([originCoords, destinationCoords])
-            console.log("Coordinates at 20-minute intervals:", coordinates);
             const geojson = {
                 type: 'Feature',
                 properties: {},
@@ -158,7 +157,8 @@
                 const interpolatedCoordinates = interpolateCoordinates(stepGeometry, percentage);
                 const intervalDatetime = new Date(now.getTime() + (accumulatedDuration + timeDifference) * 1000);
 
-                const city = await getCityName(interpolatedCoordinates); 
+                const city = await getCityName(interpolatedCoordinates);
+                console.log(city);
 
                 coordinates.push([interpolatedCoordinates, intervalDatetime, city])
 
@@ -168,8 +168,6 @@
             accumulatedDuration += stepDuration;
             currentStepIndex++;
         }
-        console.log("coordinates")
-        console.log(coordinates);
         return coordinates;
     }
 
@@ -180,7 +178,7 @@
         const data = await response.json();
 
         if (data.features && data.features.length > 0) {
-            return data.features.text || data.features.place_name; 
+            return data.features[0].place_name; 
         } else {
             return "Unknown City";
         }
@@ -232,7 +230,6 @@
     }
 
     function addPinsToMap(coordinates) { // testing function
-        console.log(coordinates);
         markers.forEach(marker => marker.remove());
         markers = [];
 
