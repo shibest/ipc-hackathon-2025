@@ -31,9 +31,10 @@
                                     <div class="icon"><CloudSnow /></div>
                                 {:else if forecastState.hour_icons[i] === 'cloudfog'}
                                     <div class="icon"><CloudFog /></div>
-                                {:else if forecastState.hour_icons[i] === 'cloudslightning'}
+                                {:else if forecastState.hour_icons[i] === 'cloudlightning'}
                                     <div class="icon"><CloudLightning /></div>
                                 {:else}
+                                    <div class="icon">{forecastState.hour_icons[i]}</div>
                                 {/if}
                             </td>
                             <td>{forecastState.forecast.forecast.forecastday[0].hour[i].condition.text}</td>

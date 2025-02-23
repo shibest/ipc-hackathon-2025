@@ -29,6 +29,7 @@
             center: [-122.308954, 47.608027],
             zoom: 12
         });
+        map.addControl(new mapboxgl.NavigationControl());
     });
 
     async function getWeatherAtTime(coordinates, datetime=null) {
@@ -374,4 +375,14 @@
     button:hover{
         background-color: rgb(199, 199, 199);
     }
+
+    .mapboxgl-popup {
+        width: 5vw;
+    }
+
+    .mapboxgl-popup-content {
+        text-align: left;
+        font-family: 'Urbanist', serif;
+    }
+    
 </style>

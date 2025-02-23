@@ -64,7 +64,9 @@
         }
 	}
 
-	async function getCurrentWeather(position) {
+	async function getCurrentWeather() {
+		const position = await getPosition();
+
 		const fetchWeatherPromise = await fetch(PUBLIC_URL+'/current.json?key='+PUBLIC_API_KEY+'&q='+ await position[1]+','+await position[0]+'&aqi=yes')
 		.then(response => {
 			if (!response.ok) {
@@ -632,7 +634,8 @@
 		});
 	}
 
-	async function getWeatherForecast(position) {
+	async function getWeatherForecast() {
+		const position = await getPosition();
 		const fetchWeatherPromise = await fetch(PUBLIC_URL+'/forecast.json?key='+PUBLIC_API_KEY+'&q='+ await position[1]+','+await position[0]+'&days=7&aqi=yes&alerts=yes')
 		.then(response => {
 			if (!response.ok) {
@@ -688,7 +691,7 @@
 					hour_icons.push('cloud')
 				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text === "Mist") {
 					hour_icons.push('cloudfog')
-				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text.includes("thunder")) {
+				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text.includes("thunder") || forecastState.forecast.forecast.forecastday[0].hour[i].condition.text.includes("outbreaks")) {
 					hour_icons.push('cloudlightning')
 				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text.includes("rain") || forecastState.forecast.forecast.forecastday[0].hour[i].condition.text.includes("drizzle") || forecastState.forecast.forecast.forecastday[0].hour[i].condition.text.includes("sleet") || forecastState.forecast.forecast.forecastday[0].hour[i].condition.text.includes("shower")) {
 					hour_icons.push('cloudrain')
@@ -711,7 +714,8 @@
 		});
 	}
 
-	async function getAlertsToday(position) {
+	async function getAlertsToday() {
+		const position = await getPosition();
 		const fetchAlertPromise = await fetch(PUBLIC_URL+'/alerts.json?key='+PUBLIC_API_KEY+'&q='+ await position[1]+','+await position[0])
 		.then(response => {
 			if (!response.ok) {
@@ -754,10 +758,9 @@
 	}
 
     onMount(async () => {
-        position = await getPosition()
-		getCurrentWeather(position);
-		getWeatherForecast(position);
-		getAlertsToday(position);
+		getCurrentWeather();
+		getWeatherForecast();
+		getAlertsToday();
 
 		/*if (current_weather.currrent.condition === "Overcast") {
 			bg_color = "gray";
