@@ -1,5 +1,6 @@
 <svelte:head>
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
     <title>Trip Planner</title>
 </svelte:head>
 
@@ -7,7 +8,8 @@
     import { onMount } from 'svelte';
     import mapboxgl from 'mapbox-gl';
 
-    import { PUBLIC_API_KEY, PUBLIC_URL } from '$env/static/public';
+    import { PUBLIC_API_KEY, PUBLIC_URL, PUBLIC_GEMINI_API_KEY } from '$env/static/public';
+    import { GoogleGenerativeAI } from "@google/generative-ai";
 
     import {weatherState} from '$lib/state.svelte';
 
@@ -22,6 +24,9 @@
     let origin_weather;
     let destination_weather;
     let markers = [];
+    let geminiTripReport;
+
+    const api_key = PUBLIC_GEMINI_API_KEY;
 
     onMount(() => {
         map = new mapboxgl.Map({
@@ -76,6 +81,7 @@
             const route = await data.routes[0].geometry.coordinates;
             const coordinates = await extractCoordinatesAtInterval(data.routes[0], 3600);
             addPinsToMap(coordinates);
+            getTripReport(coordinates);
             //addPinsToMap([originCoords, destinationCoords])
             const geojson = {
                 type: 'Feature',
@@ -139,7 +145,7 @@
         const originCity = await getCityName(originCoordinates);
         const originWeather = await getWeatherAtTime(originCoordinates);
         
-        coordinates.push([originCoordinates, now, originCity, originWeather.current.temp_f]);
+        coordinates.push([originCoordinates, now, originCity, originWeather.current.temp_f, originWeather.current.condition.text]);
         
         while (currentStepIndex < route.legs[0].steps.length) {
             const step = route.legs[0].steps[currentStepIndex];
@@ -157,7 +163,7 @@
                 const weather = await getWeatherAtTime(interpolatedCoordinates, intervalDatetime);
                 //console.log(weather);
 
-                coordinates.push([interpolatedCoordinates, intervalDatetime, city, weather.forecast.forecastday[0].hour[0].temp_f])
+                coordinates.push([interpolatedCoordinates, intervalDatetime, city, weather.forecast.forecastday[0].hour[0].temp_f, weather.forecast.forecastday[0].hour[0].condition.text])
 
                 nextInterval += 3600; 
             }
@@ -170,7 +176,7 @@
         const destinationCity = await getCityName(destinationCoordinates);
         const destinationDatetime = new Date(now.getTime() + accumulatedDuration * 1000);
         const destinationWeather = await getWeatherAtTime(destinationCoordinates, destinationDatetime);
-        coordinates.push([destinationCoordinates, destinationDatetime, destinationCity, destinationWeather.forecast.forecastday[0].hour[0].temp_f]);
+        coordinates.push([destinationCoordinates, destinationDatetime, destinationCity, destinationWeather.forecast.forecastday[0].hour[0].temp_f, destinationWeather.forecast.forecastday[0].hour[0].condition.text]);
 
         return coordinates;
     }
@@ -233,17 +239,36 @@
         return [interpolatedLng, interpolatedLat];
     }
 
-    function addPinsToMap(coordinates) { // testing function
+    function addPinsToMap(coordinates) {
         markers.forEach(marker => marker.remove());
         markers = [];
 
         coordinates.forEach((coordinate, index) => {
             const marker = new mapboxgl.Marker()
               .setLngLat(coordinate[0])
-              .setPopup(new mapboxgl.Popup().setHTML(`<h3>Time: ${coordinate[1]}}. City: ${coordinate[2]}. Weather: ${coordinate[3]}</h3>`))
+              .setPopup(new mapboxgl.Popup().setHTML(`<h3>Time: ${coordinate[1]}}<br>City: ${coordinate[2]}<br>Temperature: ${coordinate[3]}°F<br>Weather: ${coordinate[4]}</h3>`))
               .addTo(map);
             markers.push(marker);
         });
+    }
+
+    async function getTripReport(coordinates) {
+        let now = new Date();
+
+		const genAI = new GoogleGenerativeAI(api_key);
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+
+		let prompt =  `Generate a trip report of what weather I should expect when driving from ${coordinates[0][2]} to ${coordinates[coordinates.length - 1][2]}? Give me a paragraph about what I should expect (for example: Expect moderate rainfall when passing Snoqualmie Pass). Do not say here's a trip report. Use this data: `;
+        coordinates.forEach((coordinate, index) => {
+            prompt += `${index+1}: ${coordinate[2]} - ${coordinate[1]} - ${coordinate[3]}°F - ${coordinate[4]}. `
+        });
+        try {
+            const response = await model.generateContent(prompt);
+            geminiTripReport = response.response.text();
+        } catch (e) {
+            console.error(e);
+        }
     }
 </script>
 
@@ -266,7 +291,7 @@
 <div class="contents">
     <h2>Weather</h2>
     {#if origin_weather}
-        <h3>Weather in {origin_weather.location.name}, {origin_weather.location.region}</h3>
+        <h3>Weather in {origin_weather.location.name}, {origin_weather.location.region} ({origin_weather.location.localtime})</h3>
         <p>{#if origin_weather.current.condition.text.includes('thunder')}
             <CloudLightning />
         {:else if origin_weather.current.condition.text.includes('rain') || origin_weather.current.condition.text.includes('drizzle') || origin_weather.current.condition.text.includes('sleet') || origin_weather.current.condition.text.includes('shower')}
@@ -289,7 +314,7 @@
         {origin_weather.current.condition.text} | {origin_weather.current.temp_f}°F/{origin_weather.current.temp_c}°C | Feels like: {origin_weather.current.feelslike_f}°F/{origin_weather.current.feelslike_c}°C</p>
     {/if}
     {#if destination_weather}
-        <h3>Weather in {destination_weather.location.name}, {destination_weather.location.region}</h3>
+        <h3>Weather in {destination_weather.location.name}, {destination_weather.location.region} ({destination_weather.location.localtime})</h3>
         <p>{#if origin_weather.current.condition.text.includes('thunder')}
             <CloudLightning />
         {:else if origin_weather.current.condition.text.includes('rain') || origin_weather.current.condition.text.includes('drizzle') || origin_weather.current.condition.text.includes('sleet') || origin_weather.current.condition.text.includes('shower')}
@@ -310,6 +335,11 @@
             <Cloud />
         {/if}
         {destination_weather.current.condition.text} | {destination_weather.current.temp_f}°F/{destination_weather.current.temp_c}°C | Feels like: {destination_weather.current.feelslike_f}°F/{destination_weather.current.feelslike_c}°C</p>
+    {/if}
+    {#if geminiTripReport}
+        <h2 style="margin-bottom:-2vh;">What to Expect?</h2>
+        <p>Provided by Google Gemini</p>
+        <p>{geminiTripReport}</p>
     {/if}
 </div>
 
