@@ -25,6 +25,7 @@
     let destination_weather;
     let markers = [];
     let geminiTripReport;
+    let coordinates;
 
     const api_key = PUBLIC_GEMINI_API_KEY;
 
@@ -79,7 +80,7 @@
 
         if (await data.code === 'Ok' && await data.routes.length > 0) {
             const route = await data.routes[0].geometry.coordinates;
-            const coordinates = await extractCoordinatesAtInterval(data.routes[0], 3600);
+            coordinates = await extractCoordinatesAtInterval(data.routes[0], 3600);
             addPinsToMap(coordinates);
             getTripReport(coordinates);
             //addPinsToMap([originCoords, destinationCoords])
@@ -145,7 +146,7 @@
         const originCity = await getCityName(originCoordinates);
         const originWeather = await getWeatherAtTime(originCoordinates);
         
-        coordinates.push([originCoordinates, now, originCity, originWeather.current.temp_f, originWeather.current.condition.text]);
+        coordinates.push([originCoordinates, now, originCity, originWeather.current.temp_f, originWeather.current.condition.text, originWeather]);
         
         while (currentStepIndex < route.legs[0].steps.length) {
             const step = route.legs[0].steps[currentStepIndex];
@@ -163,7 +164,7 @@
                 const weather = await getWeatherAtTime(interpolatedCoordinates, intervalDatetime);
                 //console.log(weather);
 
-                coordinates.push([interpolatedCoordinates, intervalDatetime, city, weather.forecast.forecastday[0].hour[0].temp_f, weather.forecast.forecastday[0].hour[0].condition.text])
+                coordinates.push([interpolatedCoordinates, intervalDatetime, city, weather.forecast.forecastday[0].hour[0].temp_f, weather.forecast.forecastday[0].hour[0].condition.text, weather])
 
                 nextInterval += 3600; 
             }
@@ -176,7 +177,7 @@
         const destinationCity = await getCityName(destinationCoordinates);
         const destinationDatetime = new Date(now.getTime() + accumulatedDuration * 1000);
         const destinationWeather = await getWeatherAtTime(destinationCoordinates, destinationDatetime);
-        coordinates.push([destinationCoordinates, destinationDatetime, destinationCity, destinationWeather.forecast.forecastday[0].hour[0].temp_f, destinationWeather.forecast.forecastday[0].hour[0].condition.text]);
+        coordinates.push([destinationCoordinates, destinationDatetime, destinationCity, destinationWeather.forecast.forecastday[0].hour[0].temp_f, destinationWeather.forecast.forecastday[0].hour[0].condition.text, destinationWeather]);
 
         return coordinates;
     }
@@ -290,51 +291,50 @@
 </form>
 <div class="contents">
     <h2>Weather</h2>
-    {#if origin_weather}
-        <h3>Weather in {origin_weather.location.name}, {origin_weather.location.region} ({origin_weather.location.localtime})</h3>
-        <p>{#if origin_weather.current.condition.text.includes('thunder')}
+    {#if coordinates}
+        <h3>Weather in {coordinates[0][5].location.name}, {coordinates[0][5].location.region} ({coordinates[0][1]})</h3>
+        <p>{#if coordinates[0][5].current.condition.text.includes('thunder')}
             <CloudLightning />
-        {:else if origin_weather.current.condition.text.includes('rain') || origin_weather.current.condition.text.includes('drizzle') || origin_weather.current.condition.text.includes('sleet') || origin_weather.current.condition.text.includes('shower')}
+        {:else if coordinates[0][5].current.condition.text.includes('rain') || coordinates[0][5].current.condition.text.includes('drizzle') || coordinates[0][5].current.condition.text.includes('sleet') || coordinates[0][5].current.condition.text.includes('shower')}
             <CloudRain/>
-        {:else if origin_weather.current.condition.text.includes('snow') || origin_weather.current.condition.text.includes('ice') || origin_weather.current.condition.text.includes('bliz')}
+        {:else if coordinates[0][5].current.condition.text.includes('snow') || coordinates[0][5].current.condition.text.includes('ice') || coordinates[0][5].current.condition.text.includes('bliz')}
             <CloudSnow />
-        {:else if origin_weather.current.condition.text.includes('fog') || origin_weather.current.condition.text.includes('mist')}
+        {:else if coordinates[0][5].current.condition.text.includes('fog') || coordinates[0][5].current.condition.text.includes('mist')}
             <CloudFog />
-        {:else if origin_weather.current.condition.text.includes('unny')}
+        {:else if coordinates[0][5].current.condition.text.includes('unny')}
             <Sun />
-        {:else if origin_weather.current.condition.text.includes('lear')}
+        {:else if coordinates[0][5].current.condition.text.includes('lear')}
             <Moon />
-        {:else if origin_weather.current.condition.text.includes('part') && origin_weather.current.is_day == 1}
+        {:else if coordinates[0][5].current.condition.text.includes('part') && coordinates[0][5].current.is_day == 1}
             <CloudSun />
-        {:else if origin_weather.current.condition.text.includes('part') && origin_weather.current.is_day == 0}
+        {:else if coordinates[0][5].current.condition.text.includes('part') && coordinates[0][5].current.is_day == 0}
             <CloudMoon />
         {:else}
             <Cloud />
         {/if}
-        {origin_weather.current.condition.text} | {origin_weather.current.temp_f}°F/{origin_weather.current.temp_c}°C | Feels like: {origin_weather.current.feelslike_f}°F/{origin_weather.current.feelslike_c}°C</p>
-    {/if}
-    {#if destination_weather}
-        <h3>Weather in {destination_weather.location.name}, {destination_weather.location.region} ({destination_weather.location.localtime})</h3>
-        <p>{#if origin_weather.current.condition.text.includes('thunder')}
+        {coordinates[0][5].current.condition.text} | {coordinates[0][5].current.temp_f}°F/{coordinates[0][5].current.temp_c}°C | Feels like: {coordinates[0][5].current.feelslike_f}°F/{coordinates[0][5].current.feelslike_c}°C</p>
+
+        <h3>Weather in {coordinates[coordinates.length - 1][5].location.name}, {coordinates[coordinates.length - 1][5].location.region} ({coordinates[coordinates.length - 1][1]})</h3>
+        <p>{#if coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].condition.text.includes('thunder')}
             <CloudLightning />
-        {:else if origin_weather.current.condition.text.includes('rain') || origin_weather.current.condition.text.includes('drizzle') || origin_weather.current.condition.text.includes('sleet') || origin_weather.current.condition.text.includes('shower')}
+        {:else if coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].condition.text.includes('rain') || coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].condition.text.includes('drizzle') || coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].condition.text.includes('sleet') || coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].condition.text.includes('shower')}
             <CloudRain/>
-        {:else if origin_weather.current.condition.text.includes('snow') || origin_weather.current.condition.text.includes('ice') || origin_weather.current.condition.text.includes('bliz')}
+        {:else if coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].condition.text.includes('snow') || coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].condition.text.includes('ice') || coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].condition.text.includes('bliz')}
             <CloudSnow />
-        {:else if origin_weather.current.condition.text.includes('fog') || origin_weather.current.condition.text.includes('mist')}
+        {:else if coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].condition.text.includes('fog') || coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].condition.text.includes('mist')}
             <CloudFog />
-        {:else if origin_weather.current.condition.text.includes('unny')}
+        {:else if coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].condition.text.includes('unny')}
             <Sun />
-        {:else if origin_weather.current.condition.text.includes('lear')}
+        {:else if coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].condition.text.includes('lear')}
             <Moon />
-        {:else if origin_weather.current.condition.text.includes('part') && origin_weather.current.is_day == 1}
+        {:else if coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].condition.text.includes('part') && coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].is_day == 1}
             <CloudSun />
-        {:else if origin_weather.current.condition.text.includes('part') && origin_weather.current.is_day == 0}
+        {:else if coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].condition.text.includes('part') && coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].is_day == 0}
             <CloudMoon />
         {:else}
             <Cloud />
         {/if}
-        {destination_weather.current.condition.text} | {destination_weather.current.temp_f}°F/{destination_weather.current.temp_c}°C | Feels like: {destination_weather.current.feelslike_f}°F/{destination_weather.current.feelslike_c}°C</p>
+        {coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].condition.text} | {coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].temp_f}°F/{coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].temp_c}°C | Feels like: {coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].feelslike_f}°F/{coordinates[coordinates.length - 1][5].forecast.forecastday[0].hour[0].feelslike_c}°C</p>
     {/if}
     {#if geminiTripReport}
         <h2 style="margin-bottom:-2vh;">What to Expect?</h2>
