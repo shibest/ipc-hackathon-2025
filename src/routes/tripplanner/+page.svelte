@@ -31,48 +31,20 @@
         });
     });
 
-    async function getWeatherOriginDestination(origin, destination) {
-		const fetchOriginWeatherPromise = await fetch(PUBLIC_URL+'/current.json?key='+PUBLIC_API_KEY+'&q='+ await origin[1]+','+await origin[0]+'&aqi=yes')
-		.then(response => {
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-			console.log("Response received.")
-			return response.json();
-		}).then(json => {
-			console.log(json);
-            origin_weather = json;
-        }).catch(error => {
-			console.error('There was a problem with the fetch operation:', error);
-		});
-
-        const fetchDestinationWeatherPromise = await fetch(`${PUBLIC_URL}/current.json?key=${PUBLIC_API_KEY}&q=${await destination[1]},${await destination[0]}&aqi=yes`)
-		.then(response => {
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-			console.log("Response received.")
-			return response.json();
-		}).then(json => {
-			console.log(json);
-            destination_weather = json;
-        }).catch(error => {
-			console.error('There was a problem with the fetch operation:', error);
-		});
-    }
-
-    async function getWeatherAtTime(coordinates, datetime) {
-        const date = datetime.toISOString().split('T'); 
-        const hour = datetime.toLocaleTimeString({ hour: '2-digit'}).split(":")[0];
-        
-        const response = await fetch(`${PUBLIC_URL}/forecast.json?key=${PUBLIC_API_KEY}&q=${coordinates[1]},${coordinates[0]}&dt=${date}&hour=${hour}`);
-
-        const data = await response.json();
-        console.log(data);
-        if (data.forecast && data.forecast.forecastday && data.forecast.forecastday[0].hour) {
+    async function getWeatherAtTime(coordinates, datetime=null) {
+        if (datetime) {
+            const date = datetime.toISOString().split('T'); 
+            const hour = datetime.toLocaleTimeString({ hour: '2-digit'}).split(":")[0];
+            
+            const response = await fetch(`${PUBLIC_URL}/forecast.json?key=${PUBLIC_API_KEY}&q=${coordinates[1]},${coordinates[0]}&aqi=yes&dt=${date}&hour=${hour}`);
+            const data = await response.json()
+            console.log(data);
             return data
         } else {
-            throw new Error("Weather data not found for the specified time.");
+            const response = await fetch(`${PUBLIC_URL}/current.json?key=${PUBLIC_API_KEY}&q=${coordinates[1]},${coordinates[0]}&aqi=yes`)
+            const data = await response.json()
+            console.log(data);
+            return data
         }
     }
 
@@ -90,8 +62,8 @@
         }
 
         const destinationCoords = await geocode(destinationPlace);
-
-        getWeatherOriginDestination(await originCoords, await destinationCoords);
+        origin_weather = await getWeatherAtTime(originCoords);
+        destination_weather = await getWeatherAtTime(destinationCoords);
         //console.log(`https://api.mapbox.com/directions/v5/mapbox/driving/${originCoords.join(',')};${destinationCoords.join(',')}?access_token=${mapboxgl.accessToken}`);
         const response = await fetch(
             `https://api.mapbox.com/directions/v5/mapbox/driving/${await originCoords.join(',')};${destinationCoords.join(',')}?geometries=geojson&steps=true&access_token=${mapboxgl.accessToken}`
@@ -160,6 +132,13 @@
         const nextHour = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 1, 0, 0);
         let nextInterval = Math.round((nextHour.getTime() - now.getTime()) / 1000);
 
+        console.log(route);
+        const originCoordinates = route.geometry.coordinates[0];
+        const originCity = await getCityName(originCoordinates);
+        const originWeather = await getWeatherAtTime(originCoordinates);
+        
+        coordinates.push([originCoordinates, now, originCity, originWeather.current.temp_f]);
+        
         while (currentStepIndex < route.legs[0].steps.length) {
             const step = route.legs[0].steps[currentStepIndex];
             const stepDuration = step.duration;
@@ -174,7 +153,7 @@
 
                 const city = await getCityName(interpolatedCoordinates);
                 const weather = await getWeatherAtTime(interpolatedCoordinates, intervalDatetime);
-                console.log(weather);
+                //console.log(weather);
 
                 coordinates.push([interpolatedCoordinates, intervalDatetime, city, weather.forecast.forecastday[0].hour[0].temp_f])
 
@@ -184,6 +163,13 @@
             accumulatedDuration += stepDuration;
             currentStepIndex++;
         }
+
+        const destinationCoordinates = route.geometry.coordinates.slice(-1)[0];
+        const destinationCity = await getCityName(destinationCoordinates);
+        const destinationDatetime = new Date(now.getTime() + accumulatedDuration * 1000);
+        const destinationWeather = await getWeatherAtTime(destinationCoordinates, destinationDatetime);
+        coordinates.push([destinationCoordinates, destinationDatetime, destinationCity, destinationWeather.forecast.forecastday[0].hour[0].temp_f]);
+
         return coordinates;
     }
 

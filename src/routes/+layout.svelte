@@ -30,6 +30,7 @@
 	let freezing = false;
 	let fog = false;
 	let warning = false;
+    let position;
 
 	const api_key = PUBLIC_GEMINI_API_KEY;
 
@@ -63,9 +64,7 @@
         }
 	}
 
-	async function getCurrentWeather() {
-		const position = await getPosition();
-
+	async function getCurrentWeather(position) {
 		const fetchWeatherPromise = await fetch(PUBLIC_URL+'/current.json?key='+PUBLIC_API_KEY+'&q='+ await position[1]+','+await position[0]+'&aqi=yes')
 		.then(response => {
 			if (!response.ok) {
@@ -633,9 +632,7 @@
 		});
 	}
 
-	async function getWeatherForecast() {
-		const position = await getPosition();
-
+	async function getWeatherForecast(position) {
 		const fetchWeatherPromise = await fetch(PUBLIC_URL+'/forecast.json?key='+PUBLIC_API_KEY+'&q='+ await position[1]+','+await position[0]+'&days=7&aqi=yes&alerts=yes')
 		.then(response => {
 			if (!response.ok) {
@@ -714,9 +711,7 @@
 		});
 	}
 
-	async function getAlertsToday() {
-		const position = await getPosition();
-
+	async function getAlertsToday(position) {
 		const fetchAlertPromise = await fetch(PUBLIC_URL+'/alerts.json?key='+PUBLIC_API_KEY+'&q='+ await position[1]+','+await position[0])
 		.then(response => {
 			if (!response.ok) {
@@ -759,9 +754,10 @@
 	}
 
     onMount(async () => {
-		getCurrentWeather();
-		getWeatherForecast();
-		getAlertsToday();
+        position = await getPosition()
+		getCurrentWeather(position);
+		getWeatherForecast(position);
+		getAlertsToday(position);
 
 		/*if (current_weather.currrent.condition === "Overcast") {
 			bg_color = "gray";
@@ -823,7 +819,7 @@
 			}
 		}, 100);
 		setInterval(function () {
-			getCurrentWeather();
+			getCurrentWeather(position);
 		}, 120000);
     });
 </script>
