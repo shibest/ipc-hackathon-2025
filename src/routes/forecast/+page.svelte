@@ -1,3 +1,7 @@
+<svelte:head>
+    <title>Forecast</title>
+</svelte:head>
+
 <script>
     import {forecastState} from '$lib/state.svelte'; 
     import {Moon, CloudMoon, Sun, CloudSun, CloudRain, CloudSnow, CloudFog, CloudLightning, Cloud} from 'phosphor-svelte';

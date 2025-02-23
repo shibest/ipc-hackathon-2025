@@ -1,3 +1,7 @@
+<svelte:head>
+    <title>Guide</title>
+</svelte:head>
+
 <script>
     import {weatherAdvisoryGeminiOutput, conversationGeminiOutput, weatherState} from '$lib/state.svelte';
     import {ArrowRight} from 'phosphor-svelte';
@@ -54,7 +58,7 @@
 <div class="inquiry">
     <div class="inquire">
         <textarea placeholder="Ask for more info here and press the arrow..." bind:value={question}></textarea>
-        <button on:click|preventDefault={() => callGeminiviaPrompt(question)}><ArrowRight /></button>
+        <button title="Send prompt" on:click|preventDefault={() => callGeminiviaPrompt(question)}><ArrowRight /></button>
         <!--<p>Prompt: (turn this into textbox which on enter sends prompt to gemini for extra questions user may have)</p>-->
     </div>
 </div>
@@ -99,7 +103,7 @@
         outline: none;
         background-color: rgba(255,255,255,.6);
         border-radius: 1vh 0 0 1vh;
-        padding: 1.5vh 1vw;
+        padding: 2vh 2vw;
         font-family: 'Urbanist', serif;
         font-size: 2vh;
     }
@@ -134,6 +138,22 @@
 		transition: 0.2s;
 	}
 	::-webkit-scrollbar-thumb:hover {
+		background-color: rgb(255, 255, 255,.8);
+	}
+
+    textarea::-webkit-scrollbar {
+		width: .75vw;
+	}
+	textarea::-webkit-scrollbar-track {
+		background: rgb(0, 0, 0, 0);
+	}
+	textarea::-webkit-scrollbar-thumb {
+		background-color: rgb(255,255,255,.5);
+		border-radius: 1vh;
+		transition: 0.2s;
+        cursor: default;
+	}
+	textarea::-webkit-scrollbar-thumb:hover {
 		background-color: rgb(255, 255, 255,.8);
 	}
 </style>

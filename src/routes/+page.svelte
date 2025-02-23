@@ -1,3 +1,7 @@
+<svelte:head>
+    <title>AccliMate</title>
+</svelte:head>
+
 <script>
 	import { goto } from '$app/navigation';
     import {weatherState, iconState, alertState, astronomyState, thingsToDoGeminiOutput} from '$lib/state.svelte';

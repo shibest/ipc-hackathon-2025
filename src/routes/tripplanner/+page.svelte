@@ -1,5 +1,6 @@
 <svelte:head>
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+    <title>Trip Planner</title>
 </svelte:head>
 
 <script>

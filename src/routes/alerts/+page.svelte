@@ -1,3 +1,7 @@
+<svelte:head>
+    <title>Alerts</title>
+</svelte:head>
+
 <script>
     import {alertState} from '$lib/state.svelte'; 
     import {Warning, Info} from 'phosphor-svelte';

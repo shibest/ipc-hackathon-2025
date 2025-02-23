@@ -66,7 +66,6 @@
 
 	async function getCurrentWeather() {
 		const position = await getPosition();
-
 		const fetchWeatherPromise = await fetch(PUBLIC_URL+'/current.json?key='+PUBLIC_API_KEY+'&q='+ await position[1]+','+await position[0]+'&aqi=yes')
 		.then(response => {
 			if (!response.ok) {
@@ -1117,6 +1116,12 @@
 		background-color: white;
 		animation: flash 10s infinite linear;
 		opacity: 100;
+	}
+	.smear{
+		position: inherit;
+		width: 100%;
+		height: 100%;
+		backdrop-filter: blur(1vh);
 	}
 	.star{
 		position: inherit;
