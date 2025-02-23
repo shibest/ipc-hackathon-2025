@@ -196,7 +196,7 @@
     }
     .alert-link:hover {
         cursor: pointer;
-        color: rgb(157, 157, 157);
+        color: rgb(255, 255, 255);
         text-decoration: underline;
     }
 

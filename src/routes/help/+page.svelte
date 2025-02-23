@@ -12,13 +12,26 @@
         {/if}
     </div>
     <br>
-    <div class="block">
-        <p>Gemini generated response that goes over possible hazardous conditions that might happen in user's area, how to prepare for it, what to do when it happens, resources to contact</p>
+    <div class="conversation">
+        <div class="block">
+            <p>Gemini generated response that goes over possible hazardous conditions that might happen in user's area, how to prepare for it, what to do when it happens, resources to contact</p>
+        </div>
+        <div class="block">
+            <p>Gemini generated response that goes over possible hazardous conditions that might happen in user's area, how to prepare for it, what to do when it happens, resources to contact</p>
+        </div>
+        <div class="block">
+            <p>Gemini generated response that goes over possible hazardous conditions that might happen in user's area, how to prepare for it, what to do when it happens, resources to contact</p>
+        </div>
+        <div class="block">
+            <p>Gemini generated response that goes over possible hazardous conditions that might happen in user's area, how to prepare for it, what to do when it happens, resources to contact</p>
+        </div>
     </div>
 </div>
 <div class="inquiry">
     <div class="inquire">
-        <p>Prompt: (turn this into textbox which on enter sends prompt to gemini for extra questions user may have)</p>
+        <textarea />
+        <button>-></button>
+        <!--<p>Prompt: (turn this into textbox which on enter sends prompt to gemini for extra questions user may have)</p>-->
     </div>
 </div>
 
@@ -26,7 +39,7 @@
     .content{
         position: absolute;
         width: 60vw;
-        height: 76vh;
+        height: 70vh;
         margin-left: 20vw;
         margin-right: 20vw;
         overflow: auto;
@@ -34,18 +47,18 @@
     .inquiry{
         position: absolute;
         width: 60vw;
-        height: 10vh;
+        height: 12vh;
+        max-height: 12vh;
         margin-left: 20vw;
         margin-right: 20vw;
         overflow: auto;
         top: auto;
-        bottom: 0vh;
+        bottom: -2vh;
     }
     .inquire{
-        background-color: rgba(255,255,255,.6);
+        /*background-color: rgba(255,255,255,.6);*/
         backdrop-filter: blur(2vh);
         border-radius: 2vh;
-        padding: .5vh 2vw;
         height: 100%;
     }
     .block{
@@ -54,7 +67,26 @@
         border-radius: 2vh;
         padding: 2vh 2vw;
     }
-
+    textarea {
+        width: 96%;
+        height: 95%;
+        resize: none;
+        border: none;
+        outline: none;
+        background-color: rgba(255,255,255,.6);
+        border-radius: 1vh 0 0 1vh;
+        padding: 1.5vh 1vw;
+        font-family: 'Urbanist', serif;
+        font-size: 2vh;
+    }
+    textarea:focus {
+        outline: none;
+    }
+    button {
+        position:absolute;
+        width: 4%;
+        height: 95%;
+    }
 
     ::-webkit-scrollbar {
 		width: .75vw;

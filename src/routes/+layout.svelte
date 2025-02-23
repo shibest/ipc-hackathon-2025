@@ -652,10 +652,10 @@
 				if (forecastState.forecast.forecast.forecastday[i].day.condition.text === "Sunny" || forecastState.forecast.forecast.forecastday[i].day.condition.text === "Clear") {
 					icons.push('sun')
 
-				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text === "Partly cloudy") {
+				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text.includes("Partly")) {
 					icons.push('cloudsun')
 
-				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text === "Cloudy") {
+				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text.includes("Cloudy")) {
 					icons.push('cloud')
 
 				} else if (forecastState.forecast.forecast.forecastday[i].day.condition.text.includes("Overcast")) {
@@ -683,9 +683,9 @@
 				
 				if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text === "Sunny" || forecastState.forecast.forecast.forecastday[0].hour[i].condition.text === "Clear") {
 					hour_icons.push('sun')
-				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text === "Partly cloudy") {
+				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text.includes("Partly")) {
 					hour_icons.push('cloudsun')
-				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text === "Cloudy") {
+				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text.includes("Cloudy")) {
 					hour_icons.push('cloud')
 				} else if (forecastState.forecast.forecast.forecastday[0].hour[i].condition.text.includes("Overcast")) {
 					hour_icons.push('cloud')
@@ -1192,7 +1192,7 @@
 		align-items: center;
 	}
 	a:hover{
-		color: rgb(157, 157, 157);
+		color: rgb(255, 255, 255);
 	}
 	.icon{
 		display: inline;
