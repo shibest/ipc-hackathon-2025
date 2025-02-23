@@ -46,7 +46,7 @@
 			console.error('There was a problem with the fetch operation:', error);
 		});
 
-        const fetchDestinationWeatherPromise = await fetch(PUBLIC_URL+'/current.json?key='+PUBLIC_API_KEY+'&q='+ await destination[1]+','+await destination[0]+'&aqi=yes')
+        const fetchDestinationWeatherPromise = await fetch(`${PUBLIC_URL}/current.json?key=${PUBLIC_API_KEY}&q=${await destination[1]},${await destination[0]}&aqi=yes`)
 		.then(response => {
 			if (!response.ok) {
 				throw new Error(`HTTP error! status: ${response.status}`);
@@ -59,6 +59,21 @@
         }).catch(error => {
 			console.error('There was a problem with the fetch operation:', error);
 		});
+    }
+
+    async function getWeatherAtTime(coordinates, datetime) {
+        const date = datetime.toISOString().split('T'); 
+        const hour = datetime.toLocaleTimeString({ hour: '2-digit'}).split(":")[0];
+        
+        const response = await fetch(`${PUBLIC_URL}/forecast.json?key=${PUBLIC_API_KEY}&q=${coordinates[1]},${coordinates[0]}&dt=${date}&hour=${hour}`);
+
+        const data = await response.json();
+        console.log(data);
+        if (data.forecast && data.forecast.forecastday && data.forecast.forecastday[0].hour) {
+            return data
+        } else {
+            throw new Error("Weather data not found for the specified time.");
+        }
     }
 
     async function getRoute(originPlace, destinationPlace) {
@@ -158,9 +173,10 @@
                 const intervalDatetime = new Date(now.getTime() + (accumulatedDuration + timeDifference) * 1000);
 
                 const city = await getCityName(interpolatedCoordinates);
-                console.log(city);
+                const weather = await getWeatherAtTime(interpolatedCoordinates, intervalDatetime);
+                console.log(weather);
 
-                coordinates.push([interpolatedCoordinates, intervalDatetime, city])
+                coordinates.push([interpolatedCoordinates, intervalDatetime, city, weather.forecast.forecastday[0].hour[0].temp_f])
 
                 nextInterval += 3600; 
             }
@@ -236,7 +252,7 @@
         coordinates.forEach((coordinate, index) => {
             const marker = new mapboxgl.Marker()
               .setLngLat(coordinate[0])
-              .setPopup(new mapboxgl.Popup().setHTML(`<h3>Time: ${coordinate[1]}}. City: ${coordinate[2]}</h3>`))
+              .setPopup(new mapboxgl.Popup().setHTML(`<h3>Time: ${coordinate[1]}}. City: ${coordinate[2]}. Weather: ${coordinate[3]}</h3>`))
               .addTo(map);
             markers.push(marker);
         });
