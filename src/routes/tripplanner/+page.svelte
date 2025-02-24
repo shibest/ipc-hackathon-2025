@@ -276,11 +276,11 @@
 <div class="map" bind:this={mapContainer}></div>
 <form class="sidebar" on:submit|preventDefault={() => getRoute(origin, destination)}>
     <div class="row">
-        <div class="together">
+        <div class="together" style="flex: 1;">
             <label for="origin">Origin:</label>
             <input type="text" id="origin" bind:value={origin} placeholder="Origin" required>
         </div>
-        <div class="together">
+        <div class="together" style="flex: 1;">
             <label for="destination">Destination:</label>
             <input type="text" id="destination" bind:value={destination} placeholder="Destination" required>
         </div>
@@ -347,8 +347,10 @@
     .map {
         position: absolute;
         margin: 0 1vw;
-        width: 98vw;
+        width: 60vw;
         height: 84vh;
+        margin-left: 20vw;
+        margin-right: 20vw;
         border-radius: 2vh;
     }
 
@@ -360,31 +362,53 @@
         z-index: 1;
         position: absolute;
         top: 0;
-        left: 0;
+        left: 20vw;
         margin: 2vh 2vw;
         border-radius: 2vh;
-        width: 32vw;
+        width: 20vw;
+        box-sizing: border-box;
     }
 
     .contents {
         position: absolute;
         top: 18vh;
-        left: 0;
-        width: 32vw;
+        left: 20vw;
+        width: 20vw;
+        height: 62vh;
         margin: 2vh 2vw;
         border-radius: 2vh;
-        padding: 1vh 2vw;
+        padding: 1vh 1vw;
         background-color: rgb(35 55 75 / 90%);
         color: white;
         z-index: 1;
         font-family: 'Urbanist', serif;
+        overflow-y: scroll;
+        box-sizing: border-box;
     }
 
     .row{
         width: 100%;
         gap: 2vw;
         display: flex;
+        box-sizing: border-box;
     }
+
+    .together {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+    }
+
+    .together label {
+        margin-bottom: 0.5vh;
+    }
+
+    .together input[type="text"] {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
     label{
         padding-bottom: 2vh;
     }
@@ -415,5 +439,20 @@
         text-align: left;
         font-family: 'Urbanist', serif;
     }
+
+    ::-webkit-scrollbar {
+		width: .75vw;
+	}
+	::-webkit-scrollbar-track {
+		background: rgb(0, 0, 0, 0);
+	}
+	::-webkit-scrollbar-thumb {
+		background-color: rgb(255,255,255,.5);
+		border-radius: 1vh;
+		transition: 0.2s;
+	}
+	::-webkit-scrollbar-thumb:hover {
+		background-color: rgb(255, 255, 255,.8);
+	}
     
 </style>
