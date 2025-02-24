@@ -347,10 +347,8 @@
     .map {
         position: absolute;
         margin: 0 1vw;
-        width: 60vw;
+        width: 98vw;
         height: 84vh;
-        margin-left: 20vw;
-        margin-right: 20vw;
         border-radius: 2vh;
     }
 
@@ -362,18 +360,17 @@
         z-index: 1;
         position: absolute;
         top: 0;
-        left: 20vw;
         margin: 2vh 2vw;
         border-radius: 2vh;
-        width: 20vw;
+        width: 32vw;
         box-sizing: border-box;
     }
 
     .contents {
         position: absolute;
         top: 18vh;
-        left: 20vw;
-        width: 20vw;
+        left: 0vw;
+        width: 32vw;
         height: 62vh;
         margin: 2vh 2vw;
         border-radius: 2vh;
