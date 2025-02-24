@@ -3,7 +3,7 @@
 	import { onMount } from "svelte";
 	import { weatherState, iconState, alertState, forecastState, astronomyState, thingsToDoGeminiOutput, weatherAdvisoryGeminiOutput } from '$lib/state.svelte';
 	import { GoogleGenerativeAI } from "@google/generative-ai";
-	import { SunHorizon } from 'phosphor-svelte';
+	import { SunHorizon, Umbrella } from 'phosphor-svelte';
 
 	import '../app.css'
 
@@ -1065,7 +1065,7 @@
 </div>
 <div class="navbar">
 	<div class="bar">
-		<a href="/" class="routeL" title="name">AccliMate</a>
+		<a href="/" class="routeL" title="name">AccliMate <div class="inline" style="display: inline;vertical-align: middle"><Umbrella /></div></a>
 		<div class="right" style="float:right">
 			<a href="/" class="route" title="Weather Now">Now</a>
 			<a href="/forecast" class="route" title="Forecast">Forecast</a>
