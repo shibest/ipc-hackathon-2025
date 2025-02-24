@@ -18,7 +18,7 @@
         conversationGeminiOutput.prompts.push(ask);
 		const genAI = new GoogleGenerativeAI(api_key);
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-		let prompt = "Respond to the following question/prompt: '" + ask + "' given the context that the date and time is " + now + ", the user's location is " + weatherState.weather.location.name + ', ' + weatherState.weather.location.region + ', ' + weatherState.weather.location.country + '. If the prompt does not contain a reference to anything about the weather/season/climate/natural disasters, respond with "Sorry, I cannot give a response to an unrelated prompt. Please ask me a question related to weather conditions/preparedness above." Give me a paragraph. Don\'t say here are some suggestions.';
+		let prompt = "Respond to the following question/prompt: '" + ask + "' given the context that the date and time is " + now + ", the user's location is " + weatherState.weather.location.name + ', ' + weatherState.weather.location.region + ', ' + weatherState.weather.location.country + '. Give me a paragraph. Don\'t say here are some suggestions.';
         //console.log(prompt)
         question = "";
         try {
